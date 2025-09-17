@@ -3,9 +3,11 @@ name = "python-aws"
 version = "0.1.0"
 description = "AWS CDK Python project for Infrastructure as Code development"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
     "aws-cdk-lib>=2.215.0",
+    "boto3>=1.40.32",
+    "psutil>=7.0.0",
 ]
 
 [dependency-groups]

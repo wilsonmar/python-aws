@@ -15,7 +15,7 @@ https://github.com/aws-samples/aws-cdk-examples/tree/main/python/url-shortener
 
 USAGE: To run this program, on a Terminal:
     ruff check app.py
-    uv add aws-cdk-lib constructs boto3 psutil --frozen
+    uv add aws-cdk-lib constructs boto3 psutil aws_proj.aws_proj_stack --frozen
     # --frozen flag ensures that the exact versions specified in your lock file are used for consistency across environments.
 
     chmod +x app.py
@@ -26,11 +26,11 @@ USAGE: To run this program, on a Terminal:
     cdk destroy      # to dispose of the stack.
 """
 
-__last_change__ = "25-09-16 v007 + starter funcs :app.py"
+__last_change__ = "25-09-17 v008 + argparse :app.py"
 __status__ = "Passed Ruff. Not tested."
 
 
-#import argparse
+import argparse
 from datetime import datetime, timezone
 import os
 from pathlib import Path
@@ -169,7 +169,7 @@ def pgm_summary(std_strt_datetimestamp, loops_count):
 
 
 parser = argparse.ArgumentParser(description="gcp-services.py for Google Cloud Authentication")
-parser.add_argument("-h", "--help", action="store_true", help="Help (this menu)")
+#parser.add_argument("-h", "--help", action="store_true", help="Help (this menu)")
 parser.add_argument("-q", "--quiet", action="store_true", help=" Withhold INFO, ERROR, FATAL, summary messages.")
 parser.add_argument("-s", "--summary", action="store_true", help="Show run statistics at beginning and end of run")
 parser.add_argument("-v", "--verbose", action="store_true", help="Verbose: show internal data")
@@ -185,9 +185,11 @@ args = parser.parse_args()
 
 #### SECTION 08 - Override defaults and .env file with run-time parms:
 
-SHOW_QUIET = args.quiet
-SHOW_VERBOSE = args.verbose
-SHOW_DEBUG = args.debug
+# Defaults:
+SHOW_QUIET = False
+SHOW_VERBOSE = False
+SHOW_DEBUG = False
+SHOW_SUMMARY = False
 
 if args.quiet:         # -q --quiet
     SHOW_VERBOSE = False
@@ -201,19 +203,19 @@ if args.summary:       # -s --summary (flag)
     SHOW_SUMMARY = True
 if args.alert:         # -a  --alert
     send_alert = True
-if args.log_events:    # -L  --log
+if args.log:           # -L  --log
     log_events = True
 
 
 if __name__ == '__main__':
 
     local_timestamp = gen_local_timestamp()
+    pgm_strt_mem_used, pgm_process = pgm_memory_used()
+    pgm_strt_disk_free = pgm_diskspace_free()
     if SHOW_DEBUG:
         print(f"app.py started: {pgm_strt_datetimestamp}")
-        pgm_strt_mem_used, pgm_process = pgm_memory_used()
         print(f"DEBUG: {pgm_process}")
         print("DEBUG: pgm_memory used()="+str(pgm_strt_mem_used)+" MiB being used.")
-        pgm_strt_disk_free = pgm_diskspace_free()
         print(f"DEBUG: pgm_diskspace_free()={pgm_strt_disk_free:.2f} GB")
         # list_disk_space_by_device()
 
