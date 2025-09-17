@@ -1,53 +1,330 @@
+---
+layout: post
+lastchange: "25-09-16 v022 + WARP.md :README.md"
+url: "https://github.com/wilsonmar/python-aws/blog/main/README.md"
+---
 
-# Welcome to your CDK Python project!
+This repo guides Python developers to use AWS cloud resources securely and efficiently
+by leveraging the AWS CLI, CDK, and the AWS Python Boto3 library.
 
-This is a blank project for CDK development with Python.
+## Install utilities:
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+1. Install package manager: On macOS, it's Homebrew:
+   ```
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   ```
+   on Windows, it's Chocolatey:
+   ```
+   ???
+   ```
+1. Install utilities:
+   ```
+   sudo su -
+   yum install gcc openssl-devel bzip2-devel libffi-devel
+   ```
+   on Raspian:
+   ```
+   # Update package index and install pip if needed (Debian/Ubuntu example)
+   sudo apt update
+   sudo apt install -y python3-pip
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+   # Optional: create and activate a Python virtual environment
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+1. Install GitHub and setup SSH and get signing for verified commits:
+   ```
+   brew install gh
+   ??? ssh
+   ```
+1. Install NodeJs which comes with npm (Node Package Manager) used by AWS CDK (Cloud Development Kit):
+   On macOS:
+   ```
+   brew info node
+   brew install node    # from https://nodejs.org/
+   ```
+   On Linux:
+   ```
+   sudo apt install -y nodejs npm
+   ```
+1. Install AWS-CDK using NPM, on all platforms:
+   ```
+   npm install -g aws-cdk
+   ```
+1. Verify CDK:   
+   ```
+   cdk --version
+   2.1029.1 (build b45b1ab)
+   ```
+1. Confirm Python
+   ```
+   python --version
+   ```
+   Python 3.13.6
 
-To manually create a virtualenv on MacOS and Linux:
 
-```
-$ python3 -m venv .venv
-```
+<a name="BlankCDK"></a>
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+## Download python-aws repo
 
-```
-$ source .venv/bin/activate
-```
+1. Open a Terminal to create a project folder to hold this project:
+   ```
+   cd "$HOME"
+   cd wmjomt                     # folder holding all repos within my github account.
+   ```
+1. Clone
+   ```
+   git clone https://github.com/wilsonmar/python-aws
+   cd python-aws
+   ```
+   The repo contains files created based on following 
+   https://docs.aws.amazon.com/cdk/v2/guide/work-with-cdk-python.html
+   AWS Cloud Development Kit in the section below.
 
-If you are a Windows platform, you would activate the virtualenv like this:
+1. Notice the files added:
 
-```
-% .venv\Scripts\activate.bat
-```
+   The <tt>README.md</tt> (this file describing the repo).
+   
+   The <tt>WARP.md</tt> file was created by the Warp CLI utility for its AI assist capabilities.
 
-Once the virtualenv is activated, you can install the required dependencies.
+   Click <a href="#UseRepo">Use the repo</a> to skip past the <a href="#BlankCDK">Create Blank CDK project</a> below which describes how the repo was created initially.
 
-```
-$ pip install -r requirements.txt
-```
+<a href="#BlankCDK"></a>
 
-At this point you can now synthesize the CloudFormation template for this code.
+## Create Blank CDK project
 
-```
-$ cdk synth
-```
+1. Initialize a blank Python project and initialize AWS CDK project:
+   ```
+   MY_PROJ_FOLDER="python-aws"   # folder holding the repo for this project.
+   mkdir "$MY_PROJ_FOLDER"
+   cd "$MY_PROJ_FOLDER"
+   pwd               # confirm that you're at like "/Users/johndoe/wmjmt/python-aws"
+   cdk init app --language python
+   ls -al
+   ```
+   Contents of the created folder:
+   ```
+   .git          # folder to retain history and contains hook scripts
+   .gitignore    # 
+   .venv           # folder
+   <a href="#app.py">app.py</a>       # starter Python program 
+   cdk.context.json 
+   cdk.json      # tells the CDK Toolkit how to execute your app.
+   requirements-dev.txt
+   requirements.txt
+   source.bat    # for Windows to run.
+   python_aws   # folder contains __init.py and python_aws_stock.py
+   tests        # folder 
+   ```
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+   Additionally, these are created by uv and pip:
+   ```
+   .cdk.staging        # CDK asset staging directory
+   *.swp
+   package-lock.json
+   __pycache__
+   .pytest_cache
+   *.egg-info
+    ```
+1. Acknowledge:
+   ```
+   cdk acknowledge 34892
+   ```
+1. PROTIP: Rename the "master" branch to "main" (to be politically correct).
+   ```
+   git branch
+   git branch -m main
+   ```
 
-## Useful commands
+## Convert from pip to uv
+
+1. PROTIP: To better manage modules, we use the more modern uv utility, which needs to be initialized by this:
+   ```
+   uv init --no-readme
+   ```
+   That's instead of <tt>requirements.txt</tt> created and referenced by <tt>pip</tt>.
+
+   <tt>uv init</tt> creates these starter files:
+   ```
+   .gitignore          # see its contents below.
+   .python-version
+   main.py             # A "hello world"
+   pyproject.toml      # configuration
+   README.md           # empty (if created)
+   ```
+1. Copy the .python-version, main.py, pyproject.toml files to the folder created by aws cdk.
+
+1. Contents of the .gitignore file generated by uv should be combined with the contents of .gitignore generated by aws cdk:
+   ```
+   # Python-generated files
+   __pycache__/
+   *.py[oc]
+   build/
+   dist/
+   wheels/
+   *.egg-info
+
+   # Virtual environments
+   .venv
+   ```
+1. Files <tt>requirements.txt</tt> and <tt>requirements-dev.txt</tt> can be deleted because we prefer to generate files at the beginning of each work session so that we get the very latest versions of all modules and thus detect integration issues as soon as possible.
+
+<a name="app.py"></a>
+
+## Edit app.py
+
+1. See https://docs.aws.amazon.com/cdk/latest/guide/environments.html
+
+1. QUESTION: What does <tt>app.synth()</tt> do?
+
+1. Edit file <tt>app.py</tt> to "specialize" the current "stack" consisting of the AWS Account and Region you want to use. But instead of un-commenting the line specifying CDK_DEFAULT_ACCOUNT (such as 123456789012) and CDK_DEFAULT_REGION (such as 'us-east-1').
+   ```
+   env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
+   ```
+
+1. We've edited file <tt>app.py</tt> to use a try/exception coding convention to send out a console message when external dependencies have not been imported properly.
+   ```
+   uv add aws-cdk-lib constructs
+   ```
+# This uv dependency metadata for your import of PythonAwsStack, use an inline script header at the top of your Python file. This lets uv automatically manage and install the package needed for the import when you run the script.
+# /// script
+# dependencies = ["python_aws"]
+# ///
+
+
+<hr />
+
+<a name="UseRepo"></a>
+
+## Use Repository
+
+1. Every time you prepare to run the program, define a virtual environment the new uv way:
+   ```
+   uv venv .venv
+   source .venv/bin/activate
+   ```
+   Instead of what AWS recommends in their docs:
+   ```
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+   On Windows:
+   ```
+   .venv\Scripts\activate.bat
+   ```
+1. To download imports specified within the program:
+   ```
+   uv add aws_cdk
+   uv venv .venv
+   source .venv/bin/activate
+   ```
+   Instead of:
+   ```
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+   On Windows:
+   ```
+   .venv\Scripts\activate.bat
+   ```
+
+
+1. 
+
+
+   contains <tt>import aws_cdk as cdk</tt> for <tt>synth</tt> command.
+   from python_aws.python_aws_stack import PythonAwsStack
+
+
+
+   <a name="cdk synth"></a>
+
+1. Synthesize the CloudFormation template for the code:
+   ```
+   cdk synth
+   ```
+
+
+1. Install boto3 Python package (AWS SDK for Python):
+   ```
+   uv add boto3
+   ```
+   Instead of:
+   ```
+   pip install boto3
+   ```
+1. Upgrade module dependencies in requirements.txt:
+   ```
+   pip install -r requirements.txt
+   ```
+1. Edit <strong>requirements.txt</strong> to view:
+   ```
+   aws-cdk-lib==2.214.0
+   constructs>=10.0.0,<11.0.0
+   ```
+
+<a name="AWS_Account"></a>
+
+## AWS Account with Limited permissions
+
+https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+
+1. Install 
+   ```
+   curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+   sudo installer -pkg AWSCLIV2.pkg -target /
+   ```
+   installer: Package name is AWS Command Line Interface
+   installer: Installing at base path /
+   installer: The install was successful.
+1. Verify: on macOS or Linux:
+   ```
+   which aws
+   ```
+   /usr/local/bin/aws
+   ```
+   aws --version
+   ```
+   aws-cli/2.28.10 Python/3.13.6 Darwin/24.6.0 source/arm64
+
+1. Interactively configure through the IAM Identity Center: 
+   see https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html
+   ```
+   aws configure sso
+
+   SSO session name (Recommended): my-sso
+   SSO start URL [None]: https://my-sso-portal.awsapps.com/start
+   SSO region [None]:us-east-1
+
+   Attempting to automatically open the SSO authorization page in your default browser.
+
+   There are 2 AWS accounts available to you.
+   > DeveloperAccount, developer-account-admin@example.com (111122223333) 
+   ProductionAccount, production-account-admin@example.com (444455556666)
+
+   Using the account ID 111122223333
+
+   There are 2 roles available to you.
+   > ReadOnly
+   FullAccess
+
+   Using the role name "ReadOnly"
+
+   CLI default client Region [None]: us-west-2
+   CLI default output format [None]: json
+   CLI profile name [123456789011_ReadOnly]: user1
+   ```
+1. Use CLI:
+   ```
+   aws configure --profile dev
+   aws configure --profile qa
+   aws configure --profile prod
+   ```
+
+
+## AWS CDK Stacks
+
+AWS CLI Architecture: Standard CDK structure with a main stack (AwsProjStack) that can be extended with AWS resources:
 
  * `cdk ls`          list all stacks in the app
  * `cdk synth`       emits the synthesized CloudFormation template
@@ -55,4 +332,97 @@ command.
  * `cdk diff`        compare deployed stack with current state
  * `cdk docs`        open CDK documentation
 
-Enjoy!
+## Pytest for development
+
+
+AWS Cloud Development Kit API Reference
+https://docs.aws.amazon.com/cdk/api/v2/python/
+
+## 04-aiops
+
+This folder houses assets from the hands-on tutorial from Courseara 
+course: "DevOps and AI on AWS: AIOps" at:
+https://www.coursera.org/learn/aiops-aws/
+which has these hands-on Tasks using AWS Training instances:
+
+   1. Install and start the ADOT collector (adot1.sh)
+   2. Instrument the application with Python OpenTelemetry Auto-instrumentation
+   3. Observe X-Ray traces and trace map
+   4. Manually setting trace attributes
+
+## 01-webotron
+
+Webotron is a script that syncs a local directory to an s3 bucket, and optionally configure Route 53 and cloudfront as well.
+
+### Features
+
+Webotron currently has the following features:
+
+- List bucket
+- List contents of a bucket
+- Create and set up bucket
+- Sync directory tree to bucket
+- Set AWS profile with --profile=<profileName>
+- Configure route 53 domain
+
+## 02-notifon
+
+Notifon is a project to notify Slack users of changes to your AWS account using CloudWatch Events
+
+### Features
+
+Notifon currently has the following features:
+
+- Send notifications to Slack when cloudwatch events happen
+
+## 03-videolyzer
+
+Python code in this repo is at version 3.6, so needs updating for new Python coding constructs such as print().
+
+## Getting on AWS
+
+Step1: Get AWS Management Console
+Step2: Get IAM Console
+       In IAM Console we have many options to select like,
+       - Users
+       - Groups
+       - Roles
+       - Policies etc...
+
+Boto3 Automation Script
+
+## Boto3
+
+https://github.com/aws-samples/aws-cdk-examples/tree/main/python
+
+session, resource,client,collections,waiters and paginators
+
+## References
+
+https://www.youtube.com/watch?v=3DRiruDUhiA
+Using Python to Automate AWS Services | Lambda and EC2
+
+https://medium.com/@rahulsharan512/automating-aws-tasks-with-python-and-boto3-a-step-by-step-guide-1d4c7c93c773
+
+https://medium.com/kpmg-uk-engineering/aws-automation-using-python-and-boto3-1a15b1ffc96b
+AWS Automation using python and Boto3 | by Srinath Krishnamoorthy
+
+https://github.com/rahuls512/python-scripts-for-aws
+rahuls512/python-scripts-for-aws: Automating AWS Tasks ... - GitHub
+
+https://dev.to/aws-builders/aws-with-python-a-powerful-duo-for-cloud-automation-15a1
+AWS with Python: A Powerful Duo for Cloud Automation
+
+https://www.reddit.com/r/devops/comments/wdycmr/how_to_learn_python_for_aws_or_devops_use_cases/
+How to learn Python for AWS or DevOps use cases - Reddit
+
+https://aws.amazon.com/blogs/infrastructure-and-automation/category/programing-language/python/
+Python | Integration & Automation - AWS
+Oct 2, 2019
+
+https://www.youtube.com/playlist?list=PLjl2dJMjkDjlcI3SQErSq4UMX3okzafvO
+AWS Automation with Python Boto3 - 8 video playlist
+by Tech With <a target="_blank" href="https://www.linkedin.com/in/yeshwanth-l-m-5b8b9215b/">Yeshwanth</a>
+   * https://github.com/yeshwanthlm/Boto3-Course-YouTube/tree/main/Project-1
+   * https://docs.google.com/document/d/1-34IR_hz1ngwLWET9t5XSwOWEPULcDByQTp0buqJvqk/edit?usp=sharing Notes/Documentation can be found here: 
+   * AWS Playlist: https://youtube.com/playlist?list=PLjl2dJMjkDjmMEptUtRFA1ZMQ9MReTX_f
