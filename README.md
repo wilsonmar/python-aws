@@ -1,11 +1,11 @@
 ---
 layout: post
-lastchange: "25-09-17 v022 + parms, aws outline :README.md"
+lastchange: "25-09-17 v024 + aws cli :README.md"
 url: "https://github.com/wilsonmar/python-aws/blob/main/README.md"
 ---
 
 This repo guides Python developers to use AWS cloud resources securely and efficiently
-by leveraging the AWS CLI, <a href="#AWS_CDK">AWS CDK</a>, and the <a href="#Boto3">AWS Boto3</a> (among other <a href="#Libraries">Python libraries</a>).
+by leveraging the <a href="#AWS_CLI">AWS CLI</a>, <a href="#AWS_CDK">AWS CDK</a>, and the <a href="#Boto3">AWS Boto3</a> (among other <a href="#Libraries">Python libraries</a>).
 
 ## Program run parameters
 
@@ -36,7 +36,7 @@ Parameters to control programs:
 | <tt>-q</tt> | <tt>\-\-quiet</tt> | Withhold INFO, ERROR, FATAL, summary messages. |
 | <tt>-v</tt> | <tt>\-\-verbose</tt> | Show messages about internal calculations for debugging, such as the path of input and output files. |
 | <tt>-vv</tt> | <tt>\-\-debug</tt> | Show details for debugging. |
-| <tt>-L/tt> | <tt>\-\-log</tt> | Log events to a telemetry system (used during productive runs). |
+| <tt>-L</tt> | <tt>\-\-log</tt> | Log events to a telemetry system (used during productive runs). |
 | <tt>-a</tt> | <tt>\-\-alert</tt> | Send alerts (used during productive runs). |
 | <tt>-e</tt> | <tt>\-\-env</tt> <em>filepath</em> | Override the path to default <tt>.env</tt> file  containing configuration settings and secrets (API keys). |
 
@@ -50,7 +50,7 @@ DEBUG: pgm_diskspace_free()=368.20 GB
 0.000042 GB disk space consumed during run.
 SUMMARY: Ended while attempting loop 0 in 0:00:00.092067 seconds.
 ```
-The <tt>-Z</tt> in dates signify that the date is set to UTC/GMT time zone so that all servers would issue  timestamps that would not have potential errors from going back and forth Daylight Savings Summertime.
+<tt>Z</tt> in dates signify that the date is set to UTC/GMT time zone so that all servers would issue  timestamps that would not have potential errors from going back and forth Daylight Savings Summertime.
 
 <hr />
 
@@ -68,25 +68,21 @@ This program was tested to be installed and run on macOS, Raspian Linux, and Win
    ```
    ???
    ```
-1. Install utilities:
-   ```
-   sudo su -
-   yum install gcc openssl-devel bzip2-devel libffi-devel
-   ```
    on Raspian:
    ```
    # Update package index and install pip if needed (Debian/Ubuntu example)
    sudo apt update
    sudo apt install -y python3-pip
-
-   # Optional: create and activate a Python virtual environment
-   python3 -m venv .venv
-   source .venv/bin/activate
    ```
-1. Install GitHub 
+   on RedHat:
    ```
+   sudo su -
+   yum install gcc openssl-devel bzip2-devel libffi-devel
+   ```
+1. Install GitHub utilities:
+   ```
+   brew install git
    brew install gh
-   ??? ssh
    ```
 1. Setup SSH in GitHub. ???
 
@@ -117,16 +113,20 @@ This program was tested to be installed and run on macOS, Raspian Linux, and Win
    ```
    Python 3.13.6
 
+   NOTE: The preferred version is defined in the <tt>pyproject.toml</tt> file.
+
 
 <a name="AWS_CDK"></a>
 
 ## What is the AWS CDK?
 
+<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758103412/aws-cdk-1920x500_y4gmau.png"><img alt="aws-cdk-1920x500.png" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758103412/aws-cdk-1920x500_y4gmau.png" /></a>
+
 <a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758094660/aws-cdk-AppStacks-774x576_jsdljc.png"><img alt="aws-cdk-AppStacks-774x576.png" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758094660/aws-cdk-AppStacks-774x576_jsdljc.png" /></a>
 
 <a target="_blank" href="https://www.youtube.com/watch?v=D4Asp5g4fp8" title="from 2024">VIDEO</a>: "AWS CDK Crash Course for Beginners" (using TypeScript), followup to <a target="_blank" href="https://www.youtube.com/watch?v=I2cXlYYoQqQ">this from 2021</a>. <a target="_blank" href="https://www.youtube.com/watch?v=AYYTrDaEwLs&pp=0gcJCcoJAYcqIYzv">CTO Werner Vogels explains</a>.
 
-Amazon created their <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/home.html"><strong>proprietary</a> platform illustrated above</a> to enable access into the vast variety of AWS cloud resources using several application programming languages: TypeScript, JavaScript, Java, C# (.NET), Go, as well as Python, as described in the <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/work-with.html">AWS CDK Developer Guide</a> and <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/how-tos.html">How-To</a>.
+Amazon created their <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/home.html"><strong>proprietary</strong></a> platform illustrated above</a> to enable access into the vast variety of AWS cloud resources using several application programming languages: TypeScript, JavaScript, Java, C# (.NET), Go, as well as Python, as described in the <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/work-with.html">AWS CDK Developer Guide</a> and <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/how-tos.html">How-To</a>.
 
 App code define, for a <strong>user accounts</strong> within designated <strong>regions</strong>, one or more <strong>Constructs</strong> defined to manage AWS cloud resources such as S3 buckets, SQS, Lambda, DynamoDB databases, etc. Details about the full range of each resource managed by CDK is in its <a target="_blank" href="https://docs.aws.amazon.com/cdk/api/v2/python/">API Reference</a>.
 
@@ -136,7 +136,7 @@ Each of one or more <strong>Stacks</strong> group constructs, such as "Storage",
 
 Stacks and Construct definitions are "synthesized" to AWS proprietary CloudFormation template files which AWS excutes to create and manage actual resources in the AWS Cloud.
 
-<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png"><img alt="aws-diagram-767x525" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png" /></a> 
+<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png"><img alt="aws-diagram-767x525" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png" /></a>
 
 Due to its complexity, among <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python">Sample CDK Python programs</a> is <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python/cdk-validator-cfnguard">How to enable</a> the (still "experimental") <a target="_blank" href="https://github.com/cdklabs/cdk-validator-cfnguard">CDK Validator for CFNGuard</a> of <a target="_blank" href="https://docs.aws.amazon.com/controltower/latest/controlreference/proactive-controls.html">Proactive Controls</a> enforced by the <a target="_blank" href="https://docs.aws.amazon.com/controltower/latest/userguide/proactive-controls.html">AWS Control Tower</a>, which can stop the deployment of non-compliant resources deployed via CloudFormation.
 
@@ -149,24 +149,13 @@ Constructs can be defined at three levels of specificity (detail level).
 * Level 3 (L3) are called "Patterns" that define a whole pre-made architecture.
 <br /><br />
 
-AWS also has example repos such as <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python/url-shortener">URL Shortener</a>.
-
 PROTIP: Alternatives to AWS CDK is <a target="_blank" href="https://wilsonmar.github.io/terraform/Terraform">Terraform</a>, CDK for Terraform, <a target="_blank" href="https://wilsonmar.github.io/Pulumi">Pulumi</a>. Each of those platforms support other cloud and SaaS providers using <a target="_blank" href="https://www.pulumi.com/docs/iac/concepts/vs/cloud-template-transpilers/aws-cdk/">similar techniques</a>. <a target="_blank" href="https://www.site24x7.com/learn/aws/aws-cdk-pulumi-comparison.html">This detailed comparison</a>.
 
 The Construct Hub website at <a target="_blank" href="https://constructs.dev/">https://constructs.dev/</a> has crowd-sourced example code for several platforms in one place.
 
 QUESTION: Vide coding and MCP agents?
 
-<a name="AWS_CDK_CLI"></a>
 
-### AWS CDK CLI commands
-
-* `cdk help`        list all commands for cdk CLI program
-* `cdk ls`          list all stacks in the app
-* `cdk synth`       emits the synthesized CloudFormation template
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk docs`        open CDK documentation
 
 <hr />
 
@@ -395,7 +384,9 @@ What does <tt>app.synth()</tt> do?
 1. <a href="#Feduciary">Feduciary responsbilities</a> for email, credit card, and other private info.
 1. <a href="#Roles">Strategies and policies</a> in assiging permissions to working Users and Roles.
 
-1. <a href="#install">Install AWS CLI</a> for the IAM Console.
+   <a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png"><img alt="aws-diagram-767x525" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png" /></a> 
+
+1. <a href="#AWS_CLI">Install AWS CLI</a> for the IAM Console.
 1. <a href="#LockDownAdmin">Locking down Global Administrator user account</a>.
 1. <a href="#IaC">Infrastructure as Code (IaC)</a> options.
 
@@ -410,6 +401,8 @@ What does <tt>app.synth()</tt> do?
 
 (sections removed for editing)
 
+### serverless-admin user
+
 
 <a name="AWS_Account"></a>
 
@@ -417,7 +410,23 @@ What does <tt>app.synth()</tt> do?
 
 https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 
-1. Install 
+<a name="Install_AWS_CLI"></a>
+
+1. on macOS, at any folder, install the AWSCLIV2.pkg :
+   ```
+   brew install awscli
+   ```
+   on 
+1. Confirm:
+   ```
+   aws --version
+   ```
+1. Configure This prompts for AWS Access Key ID, Secret Access Key, default region, and output format:
+   ```
+   aws configure   
+   ```
+
+1. on Linux: 
    ```
    curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
    sudo installer -pkg AWSCLIV2.pkg -target /
@@ -469,6 +478,17 @@ https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
    aws configure --profile prod
    ```
 
+<a name="AWS_CDK_CLI"></a>
+
+### AWS CDK CLI commands
+
+* `cdk help`        list all commands for cdk CLI program
+* `cdk ls`          list all stacks in the app
+* `cdk synth`       emits the synthesized CloudFormation template
+* `cdk deploy`      deploy this stack to your default AWS account/region
+* `cdk diff`        compare deployed stack with current state
+* `cdk docs`        open CDK documentation
+
 <hr />
 
 <a name="MyApps"></a>
@@ -476,6 +496,12 @@ https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 ## apps folder
 
 Within the repo's apps folder: 
+
+### url-shortener.py
+
+Based on AWS-samples repo <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python/url-shortener">URL Shortener</a>.
+
+
 
 ### hello-lambda.py
 
