@@ -1,6 +1,6 @@
 ---
 layout: post
-lastchange: "25-09-16 v022 + WARP.md :README.md"
+lastchange: "25-09-16 v022 + uv video :README.md"
 url: "https://github.com/wilsonmar/python-aws/blog/main/README.md"
 ---
 
@@ -138,6 +138,9 @@ by leveraging the AWS CLI, CDK, and the AWS Python Boto3 library.
 
 ## Convert from pip to uv
 
+See <a target="_blank" href="https://www.youtube.com/watch?v=AMdG7IjgSPM">this video</a>
+for an explanation of why and how to use uv.
+
 1. PROTIP: To better manage modules, we use the more modern uv utility, which needs to be initialized by this:
    ```
    uv init --no-readme
@@ -186,11 +189,12 @@ by leveraging the AWS CLI, CDK, and the AWS Python Boto3 library.
    ```
    uv add aws-cdk-lib constructs
    ```
-# This uv dependency metadata for your import of PythonAwsStack, use an inline script header at the top of your Python file. This lets uv automatically manage and install the package needed for the import when you run the script.
-# /// script
-# dependencies = ["python_aws"]
-# ///
-
+   ```
+   # This uv dependency metadata for your import of PythonAwsStack, use an inline script header at the top of your Python file. This lets uv automatically manage and install the package needed for the import when you run the script.
+   # /// script
+   # dependencies = ["python_aws"]
+   # ///
+   ```
 
 <hr />
 
@@ -203,7 +207,7 @@ by leveraging the AWS CLI, CDK, and the AWS Python Boto3 library.
    uv venv .venv
    source .venv/bin/activate
    ```
-   Instead of what AWS recommends in their docs:
+   That's instead of what AWS recommends in their (outdated) docs:
    ```
    python3 -m venv .venv
    source .venv/bin/activate
