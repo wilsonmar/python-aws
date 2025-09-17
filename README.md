@@ -1,13 +1,60 @@
 ---
 layout: post
-lastchange: "25-09-16 v022 + uv video :README.md"
+lastchange: "25-09-17 v022 + parms, aws outline :README.md"
 url: "https://github.com/wilsonmar/python-aws/blog/main/README.md"
 ---
 
 This repo guides Python developers to use AWS cloud resources securely and efficiently
 by leveraging the AWS CLI, CDK, and the AWS Python Boto3 library.
 
+## Program run parameters
+
+For quick reference here, after successful <a href="#installation"> and <a href="#configuration">configuration</a> described below:
+
+The programs can be run using a choice of several ways:
+
+| <tt>./app.py</tt> | References the first line of the file to specify the Python interpreter. |
+| <tt>python run app.py</tt> | Invokes the Python interpreter and ignore that first interpreter line. |
+| <tt>uv run app.py</tt> | Invokes the uv package manager utility to automatically resolve package dependencies. |
+
+The last option above is our recommended approach. 
+
+The default standard output from the program is to show what is commonly known as 
+<strong>INFO</strong> level information that satisfies the objective of the program.
+For example, a program to generate a short URL would show a shortened url if sucessful.
+
+Parameters to control programs is thus:
+
+| <tt>-h</tt> | <tt>\-\-help</tt> | Display this menu of options. |
+| <tt>-q</tt> | <tt>\-\-quiet</tt> | Withholds INFO, ERROR, FATAL messages. |
+| <tt>-v</tt> | <tt>\-\-verbose</tt> | Show messages about internal calculations for debugging, such as the path of input and output files. |
+| <tt>-s</tt> | <tt>\-\-summary</tt> | Show summary statistics at the beginning and end of the run. |
+| <tt>-L/tt> | <tt>\-\-log</tt> | Log to monitoring system (used during productive runs). |
+| <tt>-a</tt> | <tt>\-\-alert</tt> | Send alerts (used during productive runs). |
+
+The most run common commands and parameters during development is:
+```
+<tt>uv run app.py -v -s</tt>
+```
+The result would look like this:
+```
+app.py started: 2025-09-16 19:06:18.153274Z
+DEBUG: psutil.Process(pid=13849, name='Python', status='running', started='19:06:15')
+DEBUG: pgm_memory used()=414.84375 MiB being used.
+DEBUG: pgm_diskspace_free()=368.20 GB
+0.046875 MB memory consumed during run in psutil.Process(pid=13849, name='Python', status='running', started='19:06:15').
+0.000042 GB disk space consumed during run.
+SUMMARY: Ended while attempting loop 0 in 0:00:00.092067 seconds.
+```
+The <tt>-Z</tt> in dates signify that the date is set to UTC/GMT time zone so that all servers would use a timestamp that does not have potential errors from going back and forth for Daylight Savings ("Summertime").
+
+<hr />
+
+<a name="installation"></a>
+
 ## Install utilities:
+
+This program was tested to be installed and run on macOS, Raspian Linux, and Windows 10 & 11.
 
 1. Install package manager: On macOS, it's Homebrew:
    ```
@@ -87,7 +134,9 @@ by leveraging the AWS CLI, CDK, and the AWS Python Boto3 library.
    
    The <tt>WARP.md</tt> file was created by the Warp CLI utility for its AI assist capabilities.
 
-   Click <a href="#UseRepo">Use the repo</a> to skip past the <a href="#BlankCDK">Create Blank CDK project</a> below which describes how the repo was created initially.
+   Click <a href="#configuration">configuration here</a> to skip past the <a href="#BlankCDK">Create Blank CDK project</a> below which describes how the repo was created initially.
+
+<hr />
 
 <a href="#BlankCDK"></a>
 
@@ -172,13 +221,17 @@ for an explanation of why and how to use uv.
    ```
 1. Files <tt>requirements.txt</tt> and <tt>requirements-dev.txt</tt> can be deleted because we prefer to generate files at the beginning of each work session so that we get the very latest versions of all modules and thus detect integration issues as soon as possible.
 
+<hr />
+
+<a name="configuration"></a>
+
+## Configuration:
+
 <a name="app.py"></a>
 
 ## Edit app.py
 
 1. See https://docs.aws.amazon.com/cdk/latest/guide/environments.html
-
-1. QUESTION: What does <tt>app.synth()</tt> do?
 
 1. Edit file <tt>app.py</tt> to "specialize" the current "stack" consisting of the AWS Account and Region you want to use. But instead of un-commenting the line specifying CDK_DEFAULT_ACCOUNT (such as 123456789012) and CDK_DEFAULT_REGION (such as 'us-east-1').
    ```
@@ -187,20 +240,16 @@ for an explanation of why and how to use uv.
 
 1. We've edited file <tt>app.py</tt> to use a try/exception coding convention to send out a console message when external dependencies have not been imported properly.
    ```
-   uv add aws-cdk-lib constructs
-   ```
-   ```
-   # This uv dependency metadata for your import of PythonAwsStack, use an inline script header at the top of your Python file. This lets uv automatically manage and install the package needed for the import when you run the script.
-   # /// script
-   # dependencies = ["python_aws"]
-   # ///
+   uv add aws-cdk-lib constructs boto3 putils
    ```
 
 <hr />
 
 <a name="UseRepo"></a>
 
-## Use Repository
+##  Use the repository
+
+### Source activate
 
 1. Every time you prepare to run the program, define a virtual environment the new uv way:
    ```
@@ -233,39 +282,52 @@ for an explanation of why and how to use uv.
    ```
 
 
-1. 
+contains <tt>import aws_cdk as cdk</tt> for <tt>synth</tt> command.
+from python_aws.python_aws_stack import PythonAwsStack
 
+<a name="cdksynth"></a>
 
-   contains <tt>import aws_cdk as cdk</tt> for <tt>synth</tt> command.
-   from python_aws.python_aws_stack import PythonAwsStack
+### CDK Synth 
 
-
-
-   <a name="cdk synth"></a>
+QUESTION: What does <tt>app.synth()</tt> do?
 
 1. Synthesize the CloudFormation template for the code:
    ```
    cdk synth
    ```
+   Technical notes:
+   ```
+   # This uv dependency metadata for your import of PythonAwsStack, use an inline script header at the top of your Python file. This lets uv automatically manage and install the package needed for the import when you run the script.
+   # /// script
+   # dependencies = ["python_aws"]
+   # ///
+   ```
 
+<hr />
 
-1. Install boto3 Python package (AWS SDK for Python):
-   ```
-   uv add boto3
-   ```
-   Instead of:
-   ```
-   pip install boto3
-   ```
-1. Upgrade module dependencies in requirements.txt:
-   ```
-   pip install -r requirements.txt
-   ```
-1. Edit <strong>requirements.txt</strong> to view:
-   ```
-   aws-cdk-lib==2.214.0
-   constructs>=10.0.0,<11.0.0
-   ```
+<a name="#Diving"></a>
+
+## Diving into AWS
+
+1. <a href="#GUI">AWS URLs and GUI</a> on an internet browser.
+1. <a href="#Feduciary">Feduciary responsbilities</a> for email, credit card, and other private info.
+1. <a href="#Roles">Strategies and policies</a> in assiging permissions to working Users and Roles.
+
+1. <a href="#install">Install AWS CLI</a> for the IAM Console.
+1. <a href="#LockDownAdmin">Locking down Global Administrator user account</a>.
+1. <a href="#IaC">Infrastructure as Code (IaC)</a> options.
+
+1. <a href="#Workflows">Workflows for what each user type does</a>.
+1. <a href="#Secrets">Secrets Manager</a> usage.
+
+1. <a href="#S3">Managing S3 buckets and files</a>.
+1. <a href="#Compute">Managing compute environments</a> (EC2 & Fargate).
+1. <a href="#RDS">Managing Relational SQL databases</a> (RDS, etc.).
+
+<hr />
+
+(sections removed for editing)
+
 
 <a name="AWS_Account"></a>
 
@@ -379,27 +441,16 @@ Notifon currently has the following features:
 
 - Send notifications to Slack when cloudwatch events happen
 
-## 03-videolyzer
+* <tt>03-videolyzer</tt> 
 
-Python code in this repo is at version 3.6, so needs updating for new Python coding constructs such as print().
-
-## Getting on AWS
-
-Step1: Get AWS Management Console
-Step2: Get IAM Console
-       In IAM Console we have many options to select like,
-       - Users
-       - Groups
-       - Roles
-       - Policies etc...
-
-Boto3 Automation Script
 
 ## Boto3
 
 https://github.com/aws-samples/aws-cdk-examples/tree/main/python
 
 session, resource,client,collections,waiters and paginators
+
+<hr />
 
 ## References
 
