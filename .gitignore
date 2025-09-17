@@ -1,3 +1,5 @@
+.DS_Store
+
 *.swp
 package-lock.json
 __pycache__
@@ -8,3 +10,15 @@ __pycache__
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
