@@ -1,7 +1,7 @@
 ---
 layout: post
 lastchange: "25-09-17 v022 + parms, aws outline :README.md"
-url: "https://github.com/wmjomt/python-aws/blob/main/README.md"
+url: "https://github.com/wilsonmar/python-aws/blob/main/README.md"
 ---
 
 This repo guides Python developers to use AWS cloud resources securely and efficiently
@@ -14,7 +14,7 @@ For quick reference here, after successful <a href="#installation"> and <a href=
 The programs can be run using a choice of several ways:
 
 | command | Note |
-| ------- | ---- |
+| -------------------------- | ---- |
 | <tt>./app.py</tt> | References the first line of the file to specify the Python interpreter. |
 | <tt>python run app.py</tt> | Invokes the Python interpreter and ignore that first interpreter line. |
 | <tt>uv run app.py</tt> | Invokes the uv package manager utility to automatically resolve package dependencies. |
@@ -23,24 +23,21 @@ The last option above is our recommended approach.
 
 The default standard output from the program is to show what is commonly known as 
 <strong>INFO</strong> level information that satisfies the objective of the program.
-For example, a program to generate a short URL would show a shortened url if sucessful.
+For example, <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python/url-shortener">sample code from AWS</a> creates shortened URLs by building a Lambda function, as <a target="_blank" href="https://www.youtube.com/watch?v=ZWCvNFUN-sU" title="from 2020">described by its creators</a>.
 
 The most run common commands and parameters during development is:
 ```
-uv run app.py -v -s
+uv run app.py -v -vv -s
 ```
 Parameters to control programs:
 | abbr. | Parm | Explanation |
 | ------- | ---- | --------- |
-| <tt>-h</tt> | <tt>\-\-help</tt> | Display this menu of options. |
 | <tt>-s</tt> | <tt>\-\-summary</tt> | Show summary statistics at the beginning and end of the run. |
 | <tt>-q</tt> | <tt>\-\-quiet</tt> | Withhold INFO, ERROR, FATAL, summary messages. |
-
 | <tt>-v</tt> | <tt>\-\-verbose</tt> | Show messages about internal calculations for debugging, such as the path of input and output files. |
 | <tt>-vv</tt> | <tt>\-\-debug</tt> | Show details for debugging. |
 | <tt>-L/tt> | <tt>\-\-log</tt> | Log events to a telemetry system (used during productive runs). |
 | <tt>-a</tt> | <tt>\-\-alert</tt> | Send alerts (used during productive runs). |
-
 | <tt>-e</tt> | <tt>\-\-env</tt> <em>filepath</em> | Override the path to default <tt>.env</tt> file  containing configuration settings and secrets (API keys). |
 
 Sample results returned:
@@ -127,7 +124,7 @@ This program was tested to be installed and run on macOS, Raspian Linux, and Win
 
 <a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758094660/aws-cdk-AppStacks-774x576_jsdljc.png"><img alt="aws-cdk-AppStacks-774x576.png" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758094660/aws-cdk-AppStacks-774x576_jsdljc.png" /></a>
 
-<a target="_blank" href="https://www.youtube.com/watch?v=D4Asp5g4fp8" title="from 2024">VIDEO</a>: "AWS CDK Crash Course for Beginners" (using TypeScript).
+<a target="_blank" href="https://www.youtube.com/watch?v=D4Asp5g4fp8" title="from 2024">VIDEO</a>: "AWS CDK Crash Course for Beginners" (using TypeScript), followup to <a target="_blank" href="https://www.youtube.com/watch?v=I2cXlYYoQqQ">this from 2021</a>. <a target="_blank" href="https://www.youtube.com/watch?v=AYYTrDaEwLs&pp=0gcJCcoJAYcqIYzv">CTO Werner Vogels explains</a>.
 
 Amazon created their <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/home.html"><strong>proprietary</a> platform illustrated above</a> to enable access into the vast variety of AWS cloud resources using several application programming languages: TypeScript, JavaScript, Java, C# (.NET), Go, as well as Python, as described in the <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/work-with.html">AWS CDK Developer Guide</a> and <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/how-tos.html">How-To</a>.
 
@@ -139,12 +136,12 @@ Each of one or more <strong>Stacks</strong> group constructs, such as "Storage",
 
 Stacks and Construct definitions are "synthesized" to AWS proprietary CloudFormation template files which AWS excutes to create and manage actual resources in the AWS Cloud.
 
-<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png"><img alt="aws-diagram-767x525" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png" /></a>
+<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png"><img alt="aws-diagram-767x525" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png" /></a> 
 
 Due to its complexity, among <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python">Sample CDK Python programs</a> is <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python/cdk-validator-cfnguard">How to enable</a> the (still "experimental") <a target="_blank" href="https://github.com/cdklabs/cdk-validator-cfnguard">CDK Validator for CFNGuard</a> of <a target="_blank" href="https://docs.aws.amazon.com/controltower/latest/controlreference/proactive-controls.html">Proactive Controls</a> enforced by the <a target="_blank" href="https://docs.aws.amazon.com/controltower/latest/userguide/proactive-controls.html">AWS Control Tower</a>, which can stop the deployment of non-compliant resources deployed via CloudFormation.
 
 AWS CDK reduces the complexity by code such as this:<br />
-<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097350/aws-cdk-cmds-1082x614_kuogee.png"><img alt="" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097350/aws-cdk-cmds-1082x614_kuogee.png" /></a>
+<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097350/aws-cdk-cmds-1082x614_kuogee.png"><img alt="" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097350/aws-cdk-cmds-1082x614_kuogee.png" /></a> 
 
 Constructs can be defined at three levels of specificity (detail level).
 * Level 1 (L1) is low-level where everything can be specified. Most don't go here.
@@ -154,10 +151,13 @@ Constructs can be defined at three levels of specificity (detail level).
 
 AWS also has example repos such as <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python/url-shortener">URL Shortener</a>.
 
-PROTIP: Alternatives to AWS CDK is <a target="_blank" href="https://wilsonmar.github.io/terraform/Terraform">Terraform</a>, CDK for Terraform, <a target="_blank" href="https://wilsonmar.github.io/terraform/Pulumi">Pulumi</a>, and other innovations. The Construct Hub website at <a target="_blank" href="https://constructs.dev/">https://constructs.dev/</a> has crowd-sourced example code for several platforms in one place.
+PROTIP: Alternatives to AWS CDK is <a target="_blank" href="https://wilsonmar.github.io/terraform/Terraform">Terraform</a>, CDK for Terraform, <a target="_blank" href="https://wilsonmar.github.io/Pulumi">Pulumi</a>. Each of those platforms support other cloud and SaaS providers using <a target="_blank" href="https://www.pulumi.com/docs/iac/concepts/vs/cloud-template-transpilers/aws-cdk/">similar techniques</a>. <a target="_blank" href="https://www.site24x7.com/learn/aws/aws-cdk-pulumi-comparison.html">This detailed comparison</a>.
+
+The Construct Hub website at <a target="_blank" href="https://constructs.dev/">https://constructs.dev/</a> has crowd-sourced example code for several platforms in one place.
 
 QUESTION: Vide coding and MCP agents?
 
+<a name="AWS_CDK_CLI"></a>
 
 ### AWS CDK CLI commands
 
@@ -170,18 +170,18 @@ QUESTION: Vide coding and MCP agents?
 
 <hr />
 
-<a name="BlankCDK"></a>
+<a name="DownloadRepo"></a>
 
 ## Download python-aws repo
 
 1. Open a Terminal to create a project folder to hold this project:
    ```
    cd "$HOME"
-   cd wmjomt        # folder holding all repos within my github account.
+   cd wilsonmar        # folder holding all repos within my github account.
    ```
 1. Clone
    ```
-   git clone https://github.com/wmjomt/python-aws
+   git clone https://github.com/wilsonmar/python-aws
    cd python-aws
    ```
    The repo contains files created based on following 
@@ -215,7 +215,7 @@ QUESTION: Vide coding and MCP agents?
    MY_PROJ_FOLDER="python-aws"   # folder holding the repo for this project.
    mkdir "$MY_PROJ_FOLDER"
    cd "$MY_PROJ_FOLDER"
-   pwd               # confirm that you're at like "/Users/johndoe/wmjomt/python-aws"
+   pwd               # confirm that you're at like "/Users/johndoe/wilsonmar/python-aws"
    cdk init app --language python
    ls -al
    ```
@@ -252,6 +252,8 @@ QUESTION: Vide coding and MCP agents?
    git branch
    git branch -m main
    ```
+
+<a name="ConvertToUV"></a>
 
 ## Convert from pip to uv
 
@@ -312,6 +314,15 @@ for an explanation of why and how to use uv.
 1. We've edited file <tt>app.py</tt> to use a try/exception coding convention to send out a console message when external dependencies have not been imported properly.
    ```
    uv add aws-cdk-lib constructs boto3 putils
+   ```
+
+<a name="Pytest"></a>
+
+## Pytest for development
+
+1. For testing: PROTIP: There is some conflict using <tt>aws-cdk-assertions</tt>, so:
+   ```
+   uv add --dev pytest 
    ```
 
 <hr />
@@ -460,12 +471,37 @@ https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 
 <hr />
 
-<a name="Pytest"></a>
+<a name="MyApps"></a>
 
-## Pytest for development
+## apps folder
+
+Within the repo's apps folder: 
+
+### hello-lambda.py
 
 
-## 04-aiops
+
+
+### 01-webotron
+
+Webotron is a script that syncs a local directory to an s3 bucket, and optionally configure Route 53 and cloudfront as well. It has these features:
+
+- List bucket
+- List contents of a bucket
+- Create and set up bucket
+- Sync directory tree to bucket
+- Set AWS profile with --profile=<profileName>
+- Configure route 53 domain
+
+### 02-notifon
+
+Notify Slack users of changes to your AWS account based on CloudWatch Event triggers.
+
+### 03-videolyzer
+
+
+
+### 04-aiops
 
 This folder houses assets from the hands-on tutorial from Courseara 
 course: "DevOps and AI on AWS: AIOps" at:
@@ -477,33 +513,7 @@ which has these hands-on Tasks using AWS Training instances:
    3. Observe X-Ray traces and trace map
    4. Manually setting trace attributes
 
-## 01-webotron
-
-Webotron is a script that syncs a local directory to an s3 bucket, and optionally configure Route 53 and cloudfront as well.
-
-### Features
-
-Webotron currently has the following features:
-
-- List bucket
-- List contents of a bucket
-- Create and set up bucket
-- Sync directory tree to bucket
-- Set AWS profile with --profile=<profileName>
-- Configure route 53 domain
-
-## 02-notifon
-
-Notifon is a project to notify Slack users of changes to your AWS account using CloudWatch Events
-
-### Features
-
-Notifon currently has the following features:
-
-- Send notifications to Slack when cloudwatch events happen
-
-* <tt>03-videolyzer</tt> 
-
+<hr />
 
 ## Boto3
 
@@ -512,6 +522,18 @@ https://github.com/aws-samples/aws-cdk-examples/tree/main/python
 session, resource,client,collections,waiters and paginators
 
 <hr />
+
+
+## Video courses
+
+By Alfredo Deza and Noah Gift from <a target="_blank" href="https://learning.oreilly.com/publisher/003a971a-64f0-4a9e-b7fa-8000623a3e21">Pragmatic AI Labs</a>
+   * <a target="_blank" href="https://learning.oreilly.com/videos/-/01242022VIDEOPAIML/">7m AWS CDK 2.8 with Python Deploy Hello World Lambda</a> 2022 (using AWS Cloud9 editor runnig cdk-workshop)
+   * <a target="_blank" href="https://learning.oreilly.com/videos/-/10262021VIDEOPAIML/">1hr Hello World IAC with AWS CDK</a> (using TypeScript on AWS Cloud9 editor) 
+   * <a target="_blank" href="https://learning.oreilly.com/videos/-/11232022VIDEOPAIML/">Assimilate AWS Cloud Development Kit (CDK)</a> Dec 2022
+   <br /><br />
+By <a target="_blank" href="https://www.linkedin.com/in/paulo-dichone/">Paulo Dichone</a>
+   * <a target="_blank" href="https://learning.oreilly.com/videos/-/9781836646211/">5hr Mastering AWS CDK - Coding Cloud Architectures Sep 20224</a> 
+
 
 ## References
 
