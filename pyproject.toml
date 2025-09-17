@@ -1,0 +1,14 @@
+[project]
+name = "python-aws"
+version = "0.1.0"
+description = "AWS CDK Python project for Infrastructure as Code development"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aws-cdk-lib>=2.215.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]

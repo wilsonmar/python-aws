@@ -37,11 +37,20 @@ from pathlib import Path
 import time
 # TODO: logging
 
-import aws_cdk as cdk         # uv add aws-cdk-lib
-import constructs     # noqa: F401 # uv add constructs   # the foundation of AWS CDK
-import boto3          # noqa: F401 # for Python
-import psutil                # uv add psutil
-from aws_proj.aws_proj_stack import AwsProjStack
+try:
+    import aws_cdk as cdk         # uv add aws-cdk-lib
+    import constructs     # noqa: F401 # uv add constructs   # the foundation of AWS CDK
+    import boto3          # noqa: F401 # for Python
+    import psutil                # uv add psutil
+    from aws_proj.aws_proj_stack import AwsProjStack
+except Exception as e:
+    print(f"Python module import failed: {e}")
+    # uv run log-time-csv.py
+    #print("    sys.prefix      = ", sys.prefix)
+    #print("    sys.base_prefix = ", sys.base_prefix)
+    print("Please activate your virtual environment:")
+    print("   uv vnv .venv\n   source .venv/bin/activate\n   uv add ___\n   uv run app.py")
+    exit(9)
 
 
 # Global variables:
@@ -134,6 +143,7 @@ def pgm_memory_used() -> (float, str):
     mem=process.memory_info().rss / (1024 ** 2)  # in z
     return mem, process_info
 
+
 #### Summary
 
 def pgm_summary(std_strt_datetimestamp, loops_count):
@@ -153,6 +163,46 @@ def pgm_summary(std_strt_datetimestamp, loops_count):
         print(f"SUMMARY: Ended while attempting loop {loops_count} in {pgm_elapsed_wall_time} seconds.")
     else:
         print(f"SUMMARY: Ended while attempting loop {loops_count}.")
+
+
+#### SECTION 07 - Read custom command line (CLI) arguments controlling this program run:
+
+
+parser = argparse.ArgumentParser(description="gcp-services.py for Google Cloud Authentication")
+parser.add_argument("-h", "--help", action="store_true", help="Help (this menu)")
+parser.add_argument("-q", "--quiet", action="store_true", help=" Withhold INFO, ERROR, FATAL, summary messages.")
+parser.add_argument("-s", "--summary", action="store_true", help="Show run statistics at beginning and end of run")
+parser.add_argument("-v", "--verbose", action="store_true", help="Verbose: show internal data")
+parser.add_argument("-vv", "--debug", action="store_true", help="Show debugging data")
+parser.add_argument("-l", "--log", action="store_true", help="Log events to a telemetry system.")
+parser.add_argument("-a", "--alert", action="store_true", help="Send alerts (used during productive runs).")
+
+parser.add_argument("-e", "--env", help="Override the path to default .env file containing configuration settings and secrets (API keys).")
+
+# Load arguments from CLI:
+args = parser.parse_args()
+
+
+#### SECTION 08 - Override defaults and .env file with run-time parms:
+
+SHOW_QUIET = args.quiet
+SHOW_VERBOSE = args.verbose
+SHOW_DEBUG = args.debug
+
+if args.quiet:         # -q --quiet
+    SHOW_VERBOSE = False
+    SHOW_DEBUG = False
+    SHOW_SUMMARY = False
+if args.verbose:       # -v --verbose (flag)
+    SHOW_VERBOSE = True
+if args.debug:         # -vv --debug (flag)
+    SHOW_DEBUG = True
+if args.summary:       # -s --summary (flag)
+    SHOW_SUMMARY = True
+if args.alert:         # -a  --alert
+    send_alert = True
+if args.log_events:    # -L  --log
+    log_events = True
 
 
 if __name__ == '__main__':

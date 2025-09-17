@@ -1,11 +1,11 @@
 ---
 layout: post
 lastchange: "25-09-17 v022 + parms, aws outline :README.md"
-url: "https://github.com/wilsonmar/python-aws/blog/main/README.md"
+url: "https://github.com/wmjomt/python-aws/blob/main/README.md"
 ---
 
 This repo guides Python developers to use AWS cloud resources securely and efficiently
-by leveraging the AWS CLI, CDK, and the AWS Python Boto3 library.
+by leveraging the AWS CLI, <a href="#AWS_CDK">AWS CDK</a>, and the <a href="#Boto3">AWS Boto3</a> (among other <a href="#Libraries">Python libraries</a>).
 
 ## Program run parameters
 
@@ -13,6 +13,8 @@ For quick reference here, after successful <a href="#installation"> and <a href=
 
 The programs can be run using a choice of several ways:
 
+| command | Note |
+| ------- | ---- |
 | <tt>./app.py</tt> | References the first line of the file to specify the Python interpreter. |
 | <tt>python run app.py</tt> | Invokes the Python interpreter and ignore that first interpreter line. |
 | <tt>uv run app.py</tt> | Invokes the uv package manager utility to automatically resolve package dependencies. |
@@ -23,20 +25,25 @@ The default standard output from the program is to show what is commonly known a
 <strong>INFO</strong> level information that satisfies the objective of the program.
 For example, a program to generate a short URL would show a shortened url if sucessful.
 
-Parameters to control programs is thus:
-
-| <tt>-h</tt> | <tt>\-\-help</tt> | Display this menu of options. |
-| <tt>-q</tt> | <tt>\-\-quiet</tt> | Withholds INFO, ERROR, FATAL messages. |
-| <tt>-v</tt> | <tt>\-\-verbose</tt> | Show messages about internal calculations for debugging, such as the path of input and output files. |
-| <tt>-s</tt> | <tt>\-\-summary</tt> | Show summary statistics at the beginning and end of the run. |
-| <tt>-L/tt> | <tt>\-\-log</tt> | Log to monitoring system (used during productive runs). |
-| <tt>-a</tt> | <tt>\-\-alert</tt> | Send alerts (used during productive runs). |
-
 The most run common commands and parameters during development is:
 ```
-<tt>uv run app.py -v -s</tt>
+uv run app.py -v -s
 ```
-The result would look like this:
+Parameters to control programs:
+| abbr. | Parm | Explanation |
+| ------- | ---- | --------- |
+| <tt>-h</tt> | <tt>\-\-help</tt> | Display this menu of options. |
+| <tt>-s</tt> | <tt>\-\-summary</tt> | Show summary statistics at the beginning and end of the run. |
+| <tt>-q</tt> | <tt>\-\-quiet</tt> | Withhold INFO, ERROR, FATAL, summary messages. |
+
+| <tt>-v</tt> | <tt>\-\-verbose</tt> | Show messages about internal calculations for debugging, such as the path of input and output files. |
+| <tt>-vv</tt> | <tt>\-\-debug</tt> | Show details for debugging. |
+| <tt>-L/tt> | <tt>\-\-log</tt> | Log events to a telemetry system (used during productive runs). |
+| <tt>-a</tt> | <tt>\-\-alert</tt> | Send alerts (used during productive runs). |
+
+| <tt>-e</tt> | <tt>\-\-env</tt> <em>filepath</em> | Override the path to default <tt>.env</tt> file  containing configuration settings and secrets (API keys). |
+
+Sample results returned:
 ```
 app.py started: 2025-09-16 19:06:18.153274Z
 DEBUG: psutil.Process(pid=13849, name='Python', status='running', started='19:06:15')
@@ -46,7 +53,7 @@ DEBUG: pgm_diskspace_free()=368.20 GB
 0.000042 GB disk space consumed during run.
 SUMMARY: Ended while attempting loop 0 in 0:00:00.092067 seconds.
 ```
-The <tt>-Z</tt> in dates signify that the date is set to UTC/GMT time zone so that all servers would use a timestamp that does not have potential errors from going back and forth for Daylight Savings ("Summertime").
+The <tt>-Z</tt> in dates signify that the date is set to UTC/GMT time zone so that all servers would issue  timestamps that would not have potential errors from going back and forth Daylight Savings Summertime.
 
 <hr />
 
@@ -79,12 +86,16 @@ This program was tested to be installed and run on macOS, Raspian Linux, and Win
    python3 -m venv .venv
    source .venv/bin/activate
    ```
-1. Install GitHub and setup SSH and get signing for verified commits:
+1. Install GitHub 
    ```
    brew install gh
    ??? ssh
    ```
-1. Install NodeJs which comes with npm (Node Package Manager) used by AWS CDK (Cloud Development Kit):
+1. Setup SSH in GitHub. ???
+
+1. Setup SSH for GitHub signing of verified commits.
+
+1. Install NodeJs which comes with npm (Node Package Manager) used by <a href="#AWS_CDK">AWS CDK (Cloud Development Kit)</a>:
    On macOS:
    ```
    brew info node
@@ -110,6 +121,55 @@ This program was tested to be installed and run on macOS, Raspian Linux, and Win
    Python 3.13.6
 
 
+<a name="AWS_CDK"></a>
+
+## What is the AWS CDK?
+
+<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758094660/aws-cdk-AppStacks-774x576_jsdljc.png"><img alt="aws-cdk-AppStacks-774x576.png" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758094660/aws-cdk-AppStacks-774x576_jsdljc.png" /></a>
+
+<a target="_blank" href="https://www.youtube.com/watch?v=D4Asp5g4fp8" title="from 2024">VIDEO</a>: "AWS CDK Crash Course for Beginners" (using TypeScript).
+
+Amazon created their <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/home.html"><strong>proprietary</a> platform illustrated above</a> to enable access into the vast variety of AWS cloud resources using several application programming languages: TypeScript, JavaScript, Java, C# (.NET), Go, as well as Python, as described in the <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/work-with.html">AWS CDK Developer Guide</a> and <a target="_blank" href="https://docs.aws.amazon.com/cdk/v2/guide/how-tos.html">How-To</a>.
+
+App code define, for a <strong>user accounts</strong> within designated <strong>regions</strong>, one or more <strong>Constructs</strong> defined to manage AWS cloud resources such as S3 buckets, SQS, Lambda, DynamoDB databases, etc. Details about the full range of each resource managed by CDK is in its <a target="_blank" href="https://docs.aws.amazon.com/cdk/api/v2/python/">API Reference</a>.
+
+Each of one or more <strong>Stacks</strong> group constructs, such as "Storage", "Dashboard", etc.
+
+<a name="Synthesize"></a>
+
+Stacks and Construct definitions are "synthesized" to AWS proprietary CloudFormation template files which AWS excutes to create and manage actual resources in the AWS Cloud.
+
+<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png"><img alt="aws-diagram-767x525" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png" /></a>
+
+Due to its complexity, among <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python">Sample CDK Python programs</a> is <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python/cdk-validator-cfnguard">How to enable</a> the (still "experimental") <a target="_blank" href="https://github.com/cdklabs/cdk-validator-cfnguard">CDK Validator for CFNGuard</a> of <a target="_blank" href="https://docs.aws.amazon.com/controltower/latest/controlreference/proactive-controls.html">Proactive Controls</a> enforced by the <a target="_blank" href="https://docs.aws.amazon.com/controltower/latest/userguide/proactive-controls.html">AWS Control Tower</a>, which can stop the deployment of non-compliant resources deployed via CloudFormation.
+
+AWS CDK reduces the complexity by code such as this:<br />
+<a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097350/aws-cdk-cmds-1082x614_kuogee.png"><img alt="" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097350/aws-cdk-cmds-1082x614_kuogee.png" /></a>
+
+Constructs can be defined at three levels of specificity (detail level).
+* Level 1 (L1) is low-level where everything can be specified. Most don't go here.
+* Level 2 (L2) is the "curated" level of "sensible" defaults, Security Best Practices, and helper methods which can be overrrided. Most commonly work at this level.
+* Level 3 (L3) are called "Patterns" that define a whole pre-made architecture.
+<br /><br />
+
+AWS also has example repos such as <a target="_blank" href="https://github.com/aws-samples/aws-cdk-examples/tree/main/python/url-shortener">URL Shortener</a>.
+
+PROTIP: Alternatives to AWS CDK is <a target="_blank" href="https://wilsonmar.github.io/terraform/Terraform">Terraform</a>, CDK for Terraform, <a target="_blank" href="https://wilsonmar.github.io/terraform/Pulumi">Pulumi</a>, and other innovations. The Construct Hub website at <a target="_blank" href="https://constructs.dev/">https://constructs.dev/</a> has crowd-sourced example code for several platforms in one place.
+
+QUESTION: Vide coding and MCP agents?
+
+
+### AWS CDK CLI commands
+
+* `cdk help`        list all commands for cdk CLI program
+* `cdk ls`          list all stacks in the app
+* `cdk synth`       emits the synthesized CloudFormation template
+* `cdk deploy`      deploy this stack to your default AWS account/region
+* `cdk diff`        compare deployed stack with current state
+* `cdk docs`        open CDK documentation
+
+<hr />
+
 <a name="BlankCDK"></a>
 
 ## Download python-aws repo
@@ -117,24 +177,32 @@ This program was tested to be installed and run on macOS, Raspian Linux, and Win
 1. Open a Terminal to create a project folder to hold this project:
    ```
    cd "$HOME"
-   cd wmjomt                     # folder holding all repos within my github account.
+   cd wmjomt        # folder holding all repos within my github account.
    ```
 1. Clone
    ```
-   git clone https://github.com/wilsonmar/python-aws
+   git clone https://github.com/wmjomt/python-aws
    cd python-aws
    ```
    The repo contains files created based on following 
    https://docs.aws.amazon.com/cdk/v2/guide/work-with-cdk-python.html
    AWS Cloud Development Kit in the section below.
 
-1. Notice the files added:
+   <a name="FilesFolders"></a>
 
-   The <tt>README.md</tt> (this file describing the repo).
+1. Notice the files and folders:
+
+   <tt>README.md</tt> (this file describing the repo).
    
-   The <tt>WARP.md</tt> file was created by the Warp CLI utility for its AI assist capabilities.
+   <tt>CONTRIBUTING.md</tt> defines policies and procedures for making git commits and Push Requests to this repo.
 
-   Click <a href="#configuration">configuration here</a> to skip past the <a href="#BlankCDK">Create Blank CDK project</a> below which describes how the repo was created initially.
+   <tt>.editorconfig</tt> (no file extension) defines coding styles and text editor configurations in order to maintain consistentcy for multiple developers working on the same project across various editors and IDEs. It's described at <a target="_blank" href="https://EditorConfig.org">EditorConfig.org</a>.
+
+   <tt>WARP.md</tt> file was created by the Warp CLI utility for its AI assist capabilities.
+
+   <tt>LICENSE</tt> (no file extension) defines the Apache Version 2.0 license governing use of this intellectual property, copied from a template.
+
+1. Click <a href="#configuration">configuration here</a> to skip past the <a href="#BlankCDK">Create Blank CDK project</a> below which describes how the repo was created initially.
 
 <hr />
 
@@ -147,7 +215,7 @@ This program was tested to be installed and run on macOS, Raspian Linux, and Win
    MY_PROJ_FOLDER="python-aws"   # folder holding the repo for this project.
    mkdir "$MY_PROJ_FOLDER"
    cd "$MY_PROJ_FOLDER"
-   pwd               # confirm that you're at like "/Users/johndoe/wmjmt/python-aws"
+   pwd               # confirm that you're at like "/Users/johndoe/wmjomt/python-aws"
    cdk init app --language python
    ls -al
    ```
@@ -155,15 +223,15 @@ This program was tested to be installed and run on macOS, Raspian Linux, and Win
    ```
    .git          # folder to retain history and contains hook scripts
    .gitignore    # 
-   .venv           # folder
+   .venv         # folder
    <a href="#app.py">app.py</a>       # starter Python program 
-   cdk.context.json 
+   cdk.context.json      # ?
    cdk.json      # tells the CDK Toolkit how to execute your app.
    requirements-dev.txt
    requirements.txt
    source.bat    # for Windows to run.
-   python_aws   # folder contains __init.py and python_aws_stock.py
-   tests        # folder 
+   python_aws    # folder contains __init.py and python_aws_stock.py
+   tests         # folder 
    ```
 
    Additionally, these are created by uv and pip:
@@ -237,6 +305,9 @@ for an explanation of why and how to use uv.
    ```
    env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
    ```
+   <a href="#Libraries"></a>
+
+   ### Python Libraries used
 
 1. We've edited file <tt>app.py</tt> to use a try/exception coding convention to send out a console message when external dependencies have not been imported properly.
    ```
@@ -289,9 +360,9 @@ from python_aws.python_aws_stack import PythonAwsStack
 
 ### CDK Synth 
 
-QUESTION: What does <tt>app.synth()</tt> do?
+What does <tt>app.synth()</tt> do?
 
-1. Synthesize the CloudFormation template for the code:
+1. <a href="#Synthesize">Synthesize</a> the CloudFormation template for the code:
    ```
    cdk synth
    ```
@@ -387,22 +458,12 @@ https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
    aws configure --profile prod
    ```
 
+<hr />
 
-## AWS CDK Stacks
-
-AWS CLI Architecture: Standard CDK structure with a main stack (AwsProjStack) that can be extended with AWS resources:
-
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+<a name="Pytest"></a>
 
 ## Pytest for development
 
-
-AWS Cloud Development Kit API Reference
-https://docs.aws.amazon.com/cdk/api/v2/python/
 
 ## 04-aiops
 
@@ -481,3 +542,4 @@ by Tech With <a target="_blank" href="https://www.linkedin.com/in/yeshwanth-l-m-
    * https://github.com/yeshwanthlm/Boto3-Course-YouTube/tree/main/Project-1
    * https://docs.google.com/document/d/1-34IR_hz1ngwLWET9t5XSwOWEPULcDByQTp0buqJvqk/edit?usp=sharing Notes/Documentation can be found here: 
    * AWS Playlist: https://youtube.com/playlist?list=PLjl2dJMjkDjmMEptUtRFA1ZMQ9MReTX_f
+
