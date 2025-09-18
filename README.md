@@ -1,6 +1,6 @@
 ---
 layout: post
-lastchange: "25-09-17 v024 + aws cli :README.md"
+lastchange: "25-09-18 v024 + aws cli :README.md"
 url: "https://github.com/wilsonmar/python-aws/blob/main/README.md"
 ---
 
@@ -524,8 +524,11 @@ session, resource,client,collections,waiters and paginators
 
 Within the repo's apps folder: 
 
-https://www.youtube.com/watch?v=Ps4CmSzRSSs&list=PLqdbsgoG9hwWYlNvMJmt6rLQXaM6MoEAh&index=4
-Use ChatGPT to create
+
+1. Use ChatGPT to create <a target="_blank" href="https://www.youtube.com/watch?v=Ps4CmSzRSSs&list=PLqdbsgoG9hwWYlNvMJmt6rLQXaM6MoEAh&index=4">VIDEO</a>
+   ```
+   You are 
+   ```
 
 ### url-shortener.py
 
