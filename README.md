@@ -7,6 +7,9 @@ url: "https://github.com/wilsonmar/python-aws/blob/main/README.md"
 This repo guides Python developers to use AWS cloud resources securely and efficiently
 by leveraging the <a href="#AWS_CLI">AWS CLI</a>, <a href="#AWS_CDK">AWS CDK</a>, and the <a href="#Boto3">AWS Boto3</a> (among other <a href="#Libraries">Python libraries</a>).
 
+This README adapts instructions from AWS with use of uv instead of pip.
+https://realpython.com/videos/run-project-with-uv/
+
 ## Program run parameters
 
 For quick reference here, after successful <a href="#installation"> and <a href="#configuration">configuration</a> described below:
@@ -39,6 +42,7 @@ Parameters to control programs:
 | <tt>-L</tt> | <tt>\-\-log</tt> | Log events to a telemetry system (used during productive runs). |
 | <tt>-a</tt> | <tt>\-\-alert</tt> | Send alerts (used during productive runs). |
 | <tt>-e</tt> | <tt>\-\-env</tt> <em>filepath</em> | Override the path to default <tt>.env</tt> file  containing configuration settings and secrets (API keys). |
+| <tt>-D</tt> | <tt>\-\-destroy</tt> | Destroy resources after processing. |
 
 Sample results returned:
 ```
@@ -149,7 +153,9 @@ Constructs can be defined at three levels of specificity (detail level).
 * Level 3 (L3) are called "Patterns" that define a whole pre-made architecture.
 <br /><br />
 
-PROTIP: Alternatives to AWS CDK is <a target="_blank" href="https://wilsonmar.github.io/terraform/Terraform">Terraform</a>, CDK for Terraform, <a target="_blank" href="https://wilsonmar.github.io/Pulumi">Pulumi</a>. Each of those platforms support other cloud and SaaS providers using <a target="_blank" href="https://www.pulumi.com/docs/iac/concepts/vs/cloud-template-transpilers/aws-cdk/">similar techniques</a>. <a target="_blank" href="https://www.site24x7.com/learn/aws/aws-cdk-pulumi-comparison.html">This detailed comparison</a>.
+PROTIP: Alternatives to AWS CDK is <a target="_blank" href="https://wilsonmar.github.io/terraform/Terraform">Terraform</a>, which are <strong>declarative</strong> statements of static cloud resources, so utilities can check for security issues even before the resources are provisioned.
+
+HashiCorp also developed the dynamic code "CDK for Terraform" to compete with <a target="_blank" href="https://wilsonmar.github.io/Pulumi">Pulumi</a>. Each of those platforms support other cloud and SaaS providers using <a target="_blank" href="https://www.pulumi.com/docs/iac/concepts/vs/cloud-template-transpilers/aws-cdk/">similar techniques</a>. <a target="_blank" href="https://www.site24x7.com/learn/aws/aws-cdk-pulumi-comparison.html">This detailed comparison</a>.
 
 The Construct Hub website at <a target="_blank" href="https://constructs.dev/">https://constructs.dev/</a> has crowd-sourced example code for several platforms in one place.
 
@@ -305,6 +311,14 @@ for an explanation of why and how to use uv.
    uv add aws-cdk-lib constructs boto3 putils
    ```
 
+   Technical notes:
+   ```
+   # This uv dependency metadata for your import of PythonAwsStack, use an inline script header at the top of your Python file. This lets uv automatically manage and install the package needed for the import when you run the script.
+   # /// script
+   # dependencies = ["python_aws"]
+   # ///
+   ```
+
 <a name="Pytest"></a>
 
 ## Pytest for development
@@ -313,6 +327,9 @@ for an explanation of why and how to use uv.
    ```
    uv add --dev pytest 
    ```
+1. REMEMBER: Pytest looks for and automatically runs function names starting with "test_...".
+
+1. TODO: GenAI that creates test functions.
 
 <hr />
 
@@ -352,28 +369,6 @@ for an explanation of why and how to use uv.
    .venv\Scripts\activate.bat
    ```
 
-
-contains <tt>import aws_cdk as cdk</tt> for <tt>synth</tt> command.
-from python_aws.python_aws_stack import PythonAwsStack
-
-<a name="cdksynth"></a>
-
-### CDK Synth 
-
-What does <tt>app.synth()</tt> do?
-
-1. <a href="#Synthesize">Synthesize</a> the CloudFormation template for the code:
-   ```
-   cdk synth
-   ```
-   Technical notes:
-   ```
-   # This uv dependency metadata for your import of PythonAwsStack, use an inline script header at the top of your Python file. This lets uv automatically manage and install the package needed for the import when you run the script.
-   # /// script
-   # dependencies = ["python_aws"]
-   # ///
-   ```
-
 <hr />
 
 <a name="#Diving"></a>
@@ -382,24 +377,28 @@ What does <tt>app.synth()</tt> do?
 
 1. <a href="#GUI">AWS URLs and GUI</a> on an internet browser.
 1. <a href="#Feduciary">Feduciary responsbilities</a> for email, credit card, and other private info.
+1. <a href="#IaC">Infrastructure as Code (IaC)</a> options.
+
 1. <a href="#Roles">Strategies and policies</a> in assiging permissions to working Users and Roles.
 
    <a target="_blank" href="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png"><img alt="aws-diagram-767x525" src="https://res.cloudinary.com/dcajqrroq/image/upload/v1758097353/aws-diagram-767x525_wrcd0s.png" /></a> 
 
-1. <a href="#AWS_CLI">Install AWS CLI</a> for the IAM Console.
 1. <a href="#LockDownAdmin">Locking down Global Administrator user account</a>.
-1. <a href="#IaC">Infrastructure as Code (IaC)</a> options.
+
+   PROTIP: Configure a different profile for each point in the system lifecycle.
 
 1. <a href="#Workflows">Workflows for what each user type does</a>.
-1. <a href="#Secrets">Secrets Manager</a> usage.
+1. <a href="#AWS_CLI">Install AWS CLI</a> for the IAM Console.
 
+1. <a href="#Secrets">Secrets Manager</a> usage.
 1. <a href="#S3">Managing S3 buckets and files</a>.
 1. <a href="#Compute">Managing compute environments</a> (EC2 & Fargate).
 1. <a href="#RDS">Managing Relational SQL databases</a> (RDS, etc.).
 
+<em>(sections removed for editing)</em>
+
 <hr />
 
-(sections removed for editing)
 
 ### serverless-admin user
 
@@ -416,33 +415,39 @@ https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
    ```
    brew install awscli
    ```
-   on 
-1. Confirm:
-   ```
-   aws --version
-   ```
-1. Configure This prompts for AWS Access Key ID, Secret Access Key, default region, and output format:
-   ```
-   aws configure   
-   ```
-
-1. on Linux: 
+   on Linux: 
    ```
    curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
    sudo installer -pkg AWSCLIV2.pkg -target /
    ```
+   Response:
+   ```
    installer: Package name is AWS Command Line Interface
    installer: Installing at base path /
    installer: The install was successful.
+   ```
+1. Confirm:
+   ```
+   aws --version
+   ```
+   At time of writing:
+   ```
+   aws-cli/2.28.10 Python/3.13.6 Darwin/24.6.0 source/arm64
+   ```
 1. Verify: on macOS or Linux:
    ```
    which aws
    ```
    /usr/local/bin/aws
    ```
-   aws --version
+1. PROTIP: Configure a different profile for each point in the system lifecycle.
+
+   This prompts for AWS Access Key ID, Secret Access Key, default region, and output format:
    ```
-   aws-cli/2.28.10 Python/3.13.6 Darwin/24.6.0 source/arm64
+   aws configure --profile dev
+   aws configure --profile qa
+   aws configure --profile prod
+   ```
 
 1. Interactively configure through the IAM Identity Center: 
    see https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html
@@ -471,31 +476,56 @@ https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
    CLI default output format [None]: json
    CLI profile name [123456789011_ReadOnly]: user1
    ```
-1. Use CLI:
+
+<a name="Account"></a>
+
+### AWS Account
+
+1. Confirm:
    ```
-   aws configure --profile dev
-   aws configure --profile qa
-   aws configure --profile prod
+   aws sts get-caller-identity
+   ```
+   The expected response is like:
+   ```
+   {
+       "UserId": "DSDFIVEEIJVKWEWV82",
+       "Account": "123456789012",
+       "Arn": "arn:aws:iam::448292842/CICDUser"
+   }
+   ```
+1. Bootstrap:
+   ```
+   cdk bootstrap aws://123456789012/us-west-2
+   ```
+   The expected response is like:
+   ```
+   Trusted accounts for deployment: (none)
+   Trusted accounts for lookup: (none)
+   Using default execution policy of 'arn:aws:iam::aws:policy/AdministratorAccess'. Pass '--cloudformation-execution-policies' to customize.
    ```
 
-<a name="AWS_CDK_CLI"></a>
-
-### AWS CDK CLI commands
-
-* `cdk help`        list all commands for cdk CLI program
-* `cdk ls`          list all stacks in the app
-* `cdk synth`       emits the synthesized CloudFormation template
-* `cdk deploy`      deploy this stack to your default AWS account/region
-* `cdk diff`        compare deployed stack with current state
-* `cdk docs`        open CDK documentation
 
 <hr />
+
+<a name="Boto3"></a>
+
+## Boto3
+
+https://github.com/aws-samples/aws-cdk-examples/tree/main/python
+
+session, resource,client,collections,waiters and paginators
+
+<hr />
+
 
 <a name="MyApps"></a>
 
 ## apps folder
 
 Within the repo's apps folder: 
+
+https://www.youtube.com/watch?v=Ps4CmSzRSSs&list=PLqdbsgoG9hwWYlNvMJmt6rLQXaM6MoEAh&index=4
+Use ChatGPT to create
 
 ### url-shortener.py
 
@@ -541,27 +571,108 @@ which has these hands-on Tasks using AWS Training instances:
 
 <hr />
 
-## Boto3
 
-https://github.com/aws-samples/aws-cdk-examples/tree/main/python
 
-session, resource,client,collections,waiters and paginators
+<a name="AWS_CDK_CLI"></a>
 
-<hr />
+### AWS CDK CLI commands
+
+* `cdk help`        list all commands for cdk CLI program
+* `cdk docs`        open CDK documentation
+
+* `cdk ls`          list all stacks in the app
+* `cdk synth`       emits the synthesized CloudFormation template
+* `cdk diff`        compare deployed stack with current state
+* `cdk deploy`      <a href="#cdk_deploy">deploy the stack</a> to your default AWS account/region
+* `cdk destroy`     <a href="#cdk_destroy">destroy (remove) resources</a>
+
+
+contains <tt>import aws_cdk as cdk</tt> for <tt>synth</tt> command.
+from python_aws.python_aws_stack import PythonAwsStack
+
+<a name="cdksynth"></a>
+
+### CDK app.synth()
+
+What does <tt>app.synth()</tt> do?
+
+1. <a href="#Synthesize">Synthesize</a> the CloudFormation template for the code:
+   ```
+   cdk synth
+   ```
+   
+   <a name="cdk_deploy"></a>
+
+1. On CLI Terminal: Execute CDK to create resources:
+   ```
+   cdk deploy
+   ```
+1. On AWS Console GUI: view resources created
+
+   <a name="ListResources"></a>
+
+1. List resources! From GUI:
+
+   Using Python Boto3 code ???
+
+
+   <a name="cdk_destroy"></a>
+
+1. Specify a parmeter when executing app.py, such as 
+
+   <tt>-D</tt>
+
+1. On CLI Terminal: Execute CDK to create resources:
+   ```
+   cdk destroy
+   ```
+1. On AWS Console GUI: view resources removed.
+
+
+* `cdk destroy`     <a href="#cdk_destroy">destroy (remove) resources</a>
+
 
 
 ## Video courses
+
+By DevOps With Namdev on YouTube:
+   * <a target="_blank" href="https://www.youtube.com/watch?v=q8kmQndrZJY&list=PLqdbsgoG9hwWYlNvMJmt6rLQXaM6MoEAh">10 VIDEO playlist 2024</a>
+   * https://github.com/namdev-rathod/AWS-CDK
+
+By Cloud Quick Labs on YouTube:
+   * <a target="_blank" href="https://www.youtube.com/watch?v=yUGNPTGIW1U">VIDEO</a>: AWS CDK in Python | How To Use AWS CDK in Python to Provision AWS Cloud Infrastructure Resource (on Windows)
 
 By Alfredo Deza and Noah Gift from <a target="_blank" href="https://learning.oreilly.com/publisher/003a971a-64f0-4a9e-b7fa-8000623a3e21">Pragmatic AI Labs</a>
    * <a target="_blank" href="https://learning.oreilly.com/videos/-/01242022VIDEOPAIML/">7m AWS CDK 2.8 with Python Deploy Hello World Lambda</a> 2022 (using AWS Cloud9 editor runnig cdk-workshop)
    * <a target="_blank" href="https://learning.oreilly.com/videos/-/10262021VIDEOPAIML/">1hr Hello World IAC with AWS CDK</a> (using TypeScript on AWS Cloud9 editor) 
    * <a target="_blank" href="https://learning.oreilly.com/videos/-/11232022VIDEOPAIML/">Assimilate AWS Cloud Development Kit (CDK)</a> Dec 2022
    <br /><br />
+
 By <a target="_blank" href="https://www.linkedin.com/in/paulo-dichone/">Paulo Dichone</a>
    * <a target="_blank" href="https://learning.oreilly.com/videos/-/9781836646211/">5hr Mastering AWS CDK - Coding Cloud Architectures Sep 20224</a> 
 
+Be A Better Dev:
+   * <a target="_blank" href="https://www.youtube.com/watch?v=rKQ68FxY53c">AWS Just Changed Everything: Meet AWS MCP</a> 2026
+   * https://youtu.be/D4Asp5g4fp8
+   * https://courses.beabetterdev.com/courses/web-scraping-bot
+   * <a target="_blank" href="https://www.youtube.com/watch?v=eLIMB0O2LhY">VIDEO: Should you start using AWS CDK?</a>
+   * <a target="_blank" href="https://www.youtube.com/watch?v=I2cXlYYoQqQ&pp=ygUHYXdzIGNkaw%3D%3D">Playlist "Getting Started with AWS CDK and Python | Step by Step Tutorial" 2022</a>
 
-## References
+Program with Akshay on YouTube:
+   * <a target="_blank" href="https://www.youtube.com/watch?v=k5JQAIgDuu0&list=PLaze7fvkDZmiERcSA6bMJpAWoOcQdnl7WP">"AWS CDK MasterClass" Playlist 2024</a> using NodeJs.
+
+Train to Code:
+   * <a target="_blank" href="https://www.youtube.com/watch?v=a5_-NwObcgM">"Why Developers Are Switching to AWS CDK"</a>
+
+by Tech With <a target="_blank" href="https://www.linkedin.com/in/yeshwanth-l-m-5b8b9215b/">Yeshwanth</a>
+<a target="_blank" href="https://www.youtube.com/playlist?list=PLjl2dJMjkDjlcI3SQErSq4UMX3okzafvO">
+AWS Automation with Python Boto3 - 8 video playlist</a>:
+   * https://github.com/yeshwanthlm/Boto3-Course-YouTube/tree/main/Project-1
+   * https://docs.google.com/document/d/1-34IR_hz1ngwLWET9t5XSwOWEPULcDByQTp0buqJvqk/edit?usp=sharing Notes/Documentation can be found here: 
+   * AWS Playlist: https://youtube.com/playlist?list=PLjl2dJMjkDjmMEptUtRFA1ZMQ9MReTX_f
+
+
+* <a target="_blank" href="https://www.youtube.com/watch?v=V7ENMLvlzu8">AWS CDK dos and don'ts with Matthew Bonig</a>
 
 https://www.youtube.com/watch?v=3DRiruDUhiA
 Using Python to Automate AWS Services | Lambda and EC2
@@ -583,11 +694,4 @@ How to learn Python for AWS or DevOps use cases - Reddit
 https://aws.amazon.com/blogs/infrastructure-and-automation/category/programing-language/python/
 Python | Integration & Automation - AWS
 Oct 2, 2019
-
-https://www.youtube.com/playlist?list=PLjl2dJMjkDjlcI3SQErSq4UMX3okzafvO
-AWS Automation with Python Boto3 - 8 video playlist
-by Tech With <a target="_blank" href="https://www.linkedin.com/in/yeshwanth-l-m-5b8b9215b/">Yeshwanth</a>
-   * https://github.com/yeshwanthlm/Boto3-Course-YouTube/tree/main/Project-1
-   * https://docs.google.com/document/d/1-34IR_hz1ngwLWET9t5XSwOWEPULcDByQTp0buqJvqk/edit?usp=sharing Notes/Documentation can be found here: 
-   * AWS Playlist: https://youtube.com/playlist?list=PLjl2dJMjkDjmMEptUtRFA1ZMQ9MReTX_f
 
