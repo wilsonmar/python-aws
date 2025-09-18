@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+# gxp "25-09-18 v001 + safety from pre-commit :pre-push"
+
+# This is from https://github.com/wilsonmar/mac-setup/blob/main/pre-commit.sh
+# Explained at https://wilsonmar.github.io/python-scans
+# to scan only files which have been git commit applied and now before git push.
+
+# At your repo's folder (where its .git is listed):
+# Copy this file to your repo's .git/hooks/pre-push  # file name without an extension
+# cp ../mac-setup/pre-push .
+# cp pre-push .git/hooks/pre-push
+# chmod +x .git/hooks/pre-push
+# echo "\n#" >> temp1.py
+# git add temp1.py;git commit -m"test temp1.py"\ngit push
+
+START=$(date +%s)
+#START=$(date +%s%3N)  # for millisecond precision
+handle_error() {
+   #END=$(date +%s%3N)
+   END=$(date +%s)
+   DURATION=$((END - START))
+   echo "Elapsed Time: $DURATION milliseconds"
+   exit 1
+}
+trap 'handle_error' ERR
+
+echo "Running .git/hooks/pre-push"
+
+set -eo pipefail
+
+# Install the latest: 
+# if ! command -v flake8 >/dev/null; then  # command not found, so:
+# brew install ggshield
+
+# pipx install pip-audit
+safety scan  # not used because its deprecated.
+if [ $? -ne 0 ]; then
+    echo ".git/hooks/pre-push sh: Safety scan found vulnerabilities. Commit aborted."
+    exit 1
+fi
+
+END=$(date +%s)
+DURATION=$((END - START))
+echo "pre-push sh elapsed Time: $DURATION seconds."
+
+
+# brew install snyk-cli
