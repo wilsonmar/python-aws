@@ -19,14 +19,14 @@ USAGE: To run this program, on a Terminal:
     # --frozen flag ensures that the exact versions specified in your lock file are used for consistency across environments.
 
     chmod +x app.py
-    uv run app.py -v -vv
+    uv run app.py -v -vv -s
     cdk deploy '*'
 
     deactivate
     cdk destroy      # to dispose of the stack.
 """
 
-__last_change__ = "25-09-17 v008 + argparse :app.py"
+__last_change__ = "25-09-18 v009 + argparse :app.py"
 __status__ = "Passed Ruff. Not tested."
 
 
@@ -43,6 +43,8 @@ try:
     import boto3          # noqa: F401 # for Python
     import psutil                # uv add psutil
     from aws_proj.aws_proj_stack import AwsProjStack
+    import aws_cdk.aws_iam as iam
+    from aws_cdk import Fn  #, core
 except Exception as e:
     print(f"Python module import failed: {e}")
     # uv run log-time-csv.py
@@ -57,11 +59,11 @@ except Exception as e:
 SHOW_VERBOSE = True
 SHOW_DEBUG = True
 SHOW_SUMMARY = True
+loops_count = 0
 
 
 # For wall time measurements:
 pgm_strt_datetimestamp = datetime.now()
-
 
 
 def env_variable_load(variable_name, env_file='~/python-samples.env') -> str:
@@ -144,6 +146,21 @@ def pgm_memory_used() -> (float, str):
     return mem, process_info
 
 
+#### AWS functions:
+
+def role_iam():
+    """Add role based on strategic permission design.
+    
+    See https://learning.oreilly.com/answers2/?questionId=00d8a09c-8d6c-41a7-a838-e4cd72bb74eb
+    """
+    #import aws_cdk.aws_iam as iam
+    #from aws_cdk import core. Fn
+    admin_role = iam.Role(
+        self,
+        "admin",
+        assumed_by=iam.AccountRootPrincipal(Fn.ref("AWS::AccountId"))
+    )
+
 #### Summary
 
 def pgm_summary(std_strt_datetimestamp, loops_count):
@@ -178,6 +195,7 @@ parser.add_argument("-l", "--log", action="store_true", help="Log events to a te
 parser.add_argument("-a", "--alert", action="store_true", help="Send alerts (used during productive runs).")
 
 parser.add_argument("-e", "--env", help="Override the path to default .env file containing configuration settings and secrets (API keys).")
+parser.add_argument("-D", "--destroy", action="store_true", help="Destroy resources at end of run.")
 
 # Load arguments from CLI:
 args = parser.parse_args()
@@ -190,26 +208,33 @@ SHOW_QUIET = False
 SHOW_VERBOSE = False
 SHOW_DEBUG = False
 SHOW_SUMMARY = False
+send_alert = False
+destroy_resc = False
 
-if args.quiet:         # -q --quiet
+if args.quiet:           # -q --quiet
     SHOW_VERBOSE = False
     SHOW_DEBUG = False
     SHOW_SUMMARY = False
-if args.verbose:       # -v --verbose (flag)
+if args.verbose:         # -v --verbose (flag)
     SHOW_VERBOSE = True
-if args.debug:         # -vv --debug (flag)
+if args.debug:           # -vv --debug (flag)
     SHOW_DEBUG = True
-if args.summary:       # -s --summary (flag)
+if args.summary:         # -s --summary (flag)
     SHOW_SUMMARY = True
-if args.alert:         # -a  --alert
+if args.alert:           # -a  --alert
     send_alert = True
-if args.log:           # -L  --log
+if args.log:             # -L  --log
     log_events = True
-
+if args.env:             # -e  --env file-path
+    env_path = args.env
+if args.destroy_resc:    # -D  --destroy
+    destroy_resc = True
 
 if __name__ == '__main__':
 
     local_timestamp = gen_local_timestamp()
+    loops_count =+ 1
+
     pgm_strt_mem_used, pgm_process = pgm_memory_used()
     pgm_strt_disk_free = pgm_diskspace_free()
     if SHOW_DEBUG:
@@ -247,8 +272,10 @@ if __name__ == '__main__':
     app.synth()
     # This generate CloudFormation templates from your app constructs.
 
+    if destroy_resc:
+        print("-D destroy_resc() here.")
+
     if SHOW_SUMMARY:
-        loops_count = 0
         pgm_summary(pgm_strt_datetimestamp, loops_count)
 
 """
