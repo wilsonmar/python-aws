@@ -22,11 +22,15 @@ USAGE: To run this program, on a Terminal:
     uv run app.py -v -vv -s
     cdk deploy '*'
 
-    deactivate
-    cdk destroy      # to dispose of the stack.
+    deactivate   # resources created
+        
+    # There is not a Python command, but a CLI one, invoked by the subprocess library:
+    # https://www.perplexity.ai/search/python-code-to-detect-if-a-str-4W2ynyOgROKIhujPu1u1Hg
+    cdk destroy "$my_     # to dispose of the stack.
+        # Use --force to avoid the interactive confirmation prompt.
 """
 
-__last_change__ = "25-09-18 v009 + argparse :app.py"
+__last_change__ = "25-09-18 v011 + -e .env filepath :app.py"
 __status__ = "Passed Ruff. Not tested."
 
 
@@ -43,8 +47,8 @@ try:
     import boto3          # noqa: F401 # for Python
     import psutil                # uv add psutil
     from aws_proj.aws_proj_stack import AwsProjStack
-    import aws_cdk.aws_iam as iam
-    from aws_cdk import Fn  #, core
+    #import aws_cdk.aws_iam as iam
+    #from aws_cdk import Fn  #, core
 except Exception as e:
     print(f"Python module import failed: {e}")
     # uv run log-time-csv.py
@@ -155,11 +159,11 @@ def role_iam():
     """
     #import aws_cdk.aws_iam as iam
     #from aws_cdk import core. Fn
-    admin_role = iam.Role(
-        self,
-        "admin",
-        assumed_by=iam.AccountRootPrincipal(Fn.ref("AWS::AccountId"))
-    )
+    #admin_role = iam.Role(
+    #    self,
+    #    "admin",
+    #   assumed_by=iam.AccountRootPrincipal(Fn.ref("AWS::AccountId"))
+    #)
 
 #### Summary
 
@@ -194,7 +198,7 @@ parser.add_argument("-vv", "--debug", action="store_true", help="Show debugging 
 parser.add_argument("-l", "--log", action="store_true", help="Log events to a telemetry system.")
 parser.add_argument("-a", "--alert", action="store_true", help="Send alerts (used during productive runs).")
 
-parser.add_argument("-e", "--env", help="Override the path to default .env file containing configuration settings and secrets (API keys).")
+parser.add_argument("-e", "--env", type=str, required=False, help="path to .env file containing configs &secrets (API keys).")
 parser.add_argument("-D", "--destroy", action="store_true", help="Destroy resources at end of run.")
 
 # Load arguments from CLI:
@@ -211,23 +215,25 @@ SHOW_SUMMARY = False
 send_alert = False
 destroy_resc = False
 
-if args.quiet:           # -q --quiet
-    SHOW_VERBOSE = False
-    SHOW_DEBUG = False
-    SHOW_SUMMARY = False
 if args.verbose:         # -v --verbose (flag)
     SHOW_VERBOSE = True
 if args.debug:           # -vv --debug (flag)
     SHOW_DEBUG = True
 if args.summary:         # -s --summary (flag)
     SHOW_SUMMARY = True
+# After individual ones above:
+if args.quiet:           # -q --quiet
+    SHOW_VERBOSE = False
+    SHOW_DEBUG = False
+    SHOW_SUMMARY = False
+
 if args.alert:           # -a  --alert
     send_alert = True
 if args.log:             # -L  --log
     log_events = True
 if args.env:             # -e  --env file-path
     env_path = args.env
-if args.destroy_resc:    # -D  --destroy
+if args.destroy:         # -D  --destroy
     destroy_resc = True
 
 if __name__ == '__main__':
