@@ -1,19 +1,62 @@
 #!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.13"
+# dependencies = [
+#   "constructs",
+#   "boto3",
+#   "psutil",
+#   "aws-cdk-lib",
+# ]
+# ///
 
 """app.py here.
 
 https://github.com/wilsonmar/python-aws/blob/master/app.py
 
-Starter code for interacting with major resources on AWS cloud.
-(IAM, Security Manager, S3, ECS).
-See https://github.com/wilsonmar/python-aws/blob/master/README.md
+Use CDK Boto3 SDK to create forever-free services on AWS cloud.
+BotoCore takes care of serializing input parameters, signing requests, and deserializing response data into Python dictionaries.
+After performing manual steps with an email and credit card to create a master account,
+A. authentication logun, with Cognito federation
+B. Regions
+C. IAM to add users, user keys, roles using 
+D. Resource Groups, Resource Explorer https://ocadotechnology.github.io/cmq/
+E. Secrets Manager (1$ monthly for each secret), KMS keys, Keyspaces, Keyspaces tables 
+F. S3 to create and delete blob objects in buckets
+G. Elastic IPs
+H. Create and deploy Lambda serverless container images and App Runner = https://github.com/aws-samples/aws-cdk-examples/tree/main/python/url-shortener = create URL Shortener app (because 3rd-party services can become malicious forwarders).
+I. VPC networking
+J. Monitoring: CloudWatch logs, metrics, alarms, CloudTrail events, 
+K. AMIs for ECS to create and drop virtual machines for Host static websites Create RESTful 
+L. Use GraphQL APIs to access RDS db with parameter groups (free for 12 months for new AWS customers/accounts. (db.t2.micro, db.t3.micro, db.t4g.micro))
+M. Amazon Image Rekognition.
+N. Kinesis streams
+others.
 
-https://github.com/aws-samples/aws-cdk-examples/tree/main/python#table-of-contents
-TODO: Use URL Shortener sample code because 3rd-party services can become malicious forwarders:
-https://github.com/aws-samples/aws-cdk-examples/tree/main/python/url-shortener
-   using Lambda, VPC, Fargate, monitoring.
+https://github.com/baxiee/django-cdk-boilerplate with Django for accounts less than a year old:
+RDS (postgres, T3 MICRO)
+S3 bucket (for static files, images or/and django-admin)
+Lambda (DockerImage with 3 MB of memory and 60 second timeout by default)
+ECR (keeps only 2 newest images)
+API Gateway
+RDS secrets (generated automatically)
+Other secrets (like DJANGO_SECRET_KEY, generated manually)
 
-USAGE: To run this program, on a Terminal:
+Based on coding rules at https://github.com/wilsonmar/python-aws/blob/master/README.md
+
+Drawing from:
+* https://docs.aws.amazon.com/code-library/latest/ug/python_3_iam_code_examples.html
+* https://github.com/awsdocs/aws-doc-sdk-examples/tree/main/python/example_code/iam#code-examples
+* https://github.com/namdev-rathod/AWS-CDK
+* https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/python/example_code/iam/scenario_create_user_assume_role.py
+* https://www.youtube.com/playlist?list=PLO6KswO64zVtwzZyB5G62hjTzinVBBi09  Boto3 basics 2021
+* https://www.youtube.com/playlist?list=PLGyRwGktEFqeXUwkqZtiqkMHaz2b_8ojX
+* https://github.com/LinkedInLearning/complete-guide-to-serverless-web-app-development-on-aws-4229031
+* https://github.com/aws-samples/aws-cdk-examples/tree/main/python#table-of-contents
+* https://docs.astral.sh/uv/guides/integration/coiled/#running-scripts-on-the-cloud-with-coiled
+IGNORE:
+* https://dashbird.io/blog/boto3-aws-python/
+
+USAGE: To run this program, on a Terminal, first:
     ruff check app.py
     uv add aws-cdk-lib constructs boto3 psutil aws_proj.aws_proj_stack --frozen
     # --frozen flag ensures that the exact versions specified in your lock file are used for consistency across environments.
@@ -152,6 +195,9 @@ def pgm_memory_used() -> (float, str):
 
 #### AWS functions:
 
+# credentials: aws_access_id, aws_secret_access_key, aws_session_token
+
+
 def role_iam():
     """Add role based on strategic permission design.
     
@@ -164,6 +210,54 @@ def role_iam():
     #    "admin",
     #   assumed_by=iam.AccountRootPrincipal(Fn.ref("AWS::AccountId"))
     #)
+
+
+def policies_list():
+    """List the managed policies in the AWS account using the AWS SDK for Python (Boto3).
+
+    https://docs.aws.amazon.com/code-library/latest/ug/python_3_iam_code_examples.html
+    """
+    iam = boto3.client("iam")
+    try:
+        # Get a paginator for the list_policies operation:
+        paginator = iam.get_paginator("list_policies")
+        # Iterate through the pages of results:
+        for page in paginator.paginate(Scope="All", OnlyAttached=False):
+            for policy in page["Policies"]:
+                print(f"Policy name: {policy['PolicyName']}")
+                print(f"Policy  ARN: {policy['Arn']}")
+    except boto3.exceptions.BotoCoreError as e:
+        print(f"iam_hello() boto3.exceptions.BotoCoreError: {e}")
+
+
+
+# s3 buckets list: https://www.youtube.com/watch?v=ZR6adef3fCM
+# https://github.com/franchyze923/Code_From_Tutorials
+
+ 
+def aws-secrets-rotator():
+    """Rotate API keys automatically without manual updates."""
+    # import boto3, requests
+    client = boto3.client('secretsmanager')
+    def rotate_secret(secret_name):
+        new_key = requests.post("https://api.random.org/api-key").text
+        client.put_secret_value(SecretId=secret_name, SecretString=new_key)
+
+def chaos-monkey-instance():
+    """Create spot instance of Chaos Monkey.
+
+    Bid on cheap spot instances and survive interruptions.
+    """
+    # import boto3
+    ec2 = boto3.client('ec2')
+    def launch_spot():
+        ec2.request_spot_instances(
+            SpotPrice='0.01',
+            InstanceCount=1,
+            LaunchSpecification={
+                'ImageId':'ami-xxxxxx',
+                'InstanceType':'t3.micro'
+            })
 
 #### Summary
 
@@ -236,6 +330,9 @@ if args.env:             # -e  --env file-path
 if args.destroy:         # -D  --destroy
     destroy_resc = True
 
+
+
+
 if __name__ == '__main__':
 
     local_timestamp = gen_local_timestamp()
@@ -267,6 +364,9 @@ if __name__ == '__main__':
     #env=cdk.Environment(account='123456789012', region='us-east-1'),
 
     # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
+
+    policies_list()   # hello_iam
+
     )
 
     # Boto3 is a runtime AWS service that interacts with AWS directly—calling S3.create_bucket() or EC2.run_instances() to provision resources instantly, not via templates.
