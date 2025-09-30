@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# pulumi-aws-python.sh
+# python-aws-pulumi.sh
 
-last_change="25-09-30 v001 new :pulumi-aws-python.sh"
+last_change="25-09-30 v002 rename from pulumi-aws-python.sh :python-aws-pulumi.sh"
 
 # Like for az = https://www.youtube.com/watch?v=BxMcnBC7xfo = demo
 # https://www.pulumi.com/docs/esc/
@@ -13,6 +13,11 @@ last_change="25-09-30 v001 new :pulumi-aws-python.sh"
 # with short-lived cloud credentials through OpenID Connect.
 # https://www.pulumi.com/docs/esc/get-started/
 
+underline=`tput smul`
+nounderline=`tput rmul`
+bold=`tput bold`
+normal=`tput sgr0`
+
 # TODO: Install utilities: XCode Command, Homebrew, Git, etc.
 
 # TODO: Navigate to a folder to receive a new folder.
@@ -21,8 +26,10 @@ last_change="25-09-30 v001 new :pulumi-aws-python.sh"
 # TODO: Edit config file to customize variables:
 PULUMI_ORG="og2"
 PULUMI_PROJ="proj1"
-PULUMI_FILEPATH="~/pulumi-$PULUMI_PROJ"
+PULUMI_FILEPATH="~/pulumi-${PULUMI_PROJ}"
 PULUMI_TEMPLATE="aws-python"
+
+git status
 
 # Set default destination org for all stack operations
 pulumi org set-default "$PULUMI_ORG"
@@ -35,14 +42,13 @@ cd ~
 mkdir -p "${PULUMI_FILEPATH}"
 cd "${PULUMI_FILEPATH}"
 
-echo -e "\n\e[4m ls -al at $PWD >>>>\e[0m"
-ls -al "${PULUMI_FILEPATH}"
+echo -e "\n${underline}${bold}ls -al at $PWD >>>${normal}"
+pwd
+ls -al # "${PULUMI_FILEPATH}"
 
 # View backend, current stack, pending operations, and versions:
-echo -e "\n\e[4m$pulumi about \e[0m"
+echo -e "\n${underline}${bold}pulumi about >>>${normal}"
 pulumi about
-exit
-
 
 # Create a new project from template:
 pulumi new "$PULUMI_TEMPLATE" --yes
@@ -50,9 +56,6 @@ pulumi new "$PULUMI_TEMPLATE" --yes
 pulumi stack ls -a
 
 pulumi stack select dev
-
-exit
-
 
 # Login AWS: using AWS credentials (AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY).
 # TODO: aws login
